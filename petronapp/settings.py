@@ -33,6 +33,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'drf_yasg',
+    # External Apps
+    'corsheaders',
     
     # Local Apps
     'orders.apps.OrdersConfig',
@@ -55,7 +57,19 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    # CORSHEADERS
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
+
+CORS_ALLOWED_ORIGINS = [
+    "https://example.com",
+    "https://sub.example.com",
+    "http://localhost:8000",
+    "http://127.0.0.1",
+]
+
 
 ROOT_URLCONF = 'petronapp.urls'
 
@@ -134,7 +148,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'users.User'
 
 
-SMSSERVER = '45.139.10.161:8092/sms/otp'
+SMSSERVER = 'http://45.139.10.161:8092/sms/otp/'
 
 # REST_FRAMEWORK = {
     
