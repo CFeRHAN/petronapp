@@ -8,6 +8,7 @@ urlpatterns = [
     # path('user/', user_view, name='user_view'),
     # path('logout/', logout, name='logout'),
 
-    path('otp/', OTPView.as_view(),  name='otp_view')
+    path('otp/', OTPView.as_view(),  name='otp_view'),
+    path('update_password/', update_password,  name='update_password')
 
 ]
