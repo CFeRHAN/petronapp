@@ -7,6 +7,10 @@ from django.conf import settings
 from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
 
+# RestFramework
+from rest_framework.response import Response
+from rest_framework import status
+
 # Mock test for mailotp
 def mailotp(otp):
 
@@ -28,7 +32,11 @@ def mailotp(otp):
 def send_otp(otp):
     url = settings.SMSSERVER
     data = {'recipient': otp.receiver, 'otp':otp.password }
-    requests.post(url, data=data)
+    try:
+        requests.post(url, data=data)
+    except requests.exceptions as e:
+        return Response(e, status=status.HTTP_400_BAD_REQUEST)
+    
     print("otp password")   
     print(otp.password)
     print(otp.receiver)
