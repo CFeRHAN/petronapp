@@ -1,2 +1,2 @@
 # petronapp
-petronapp backend repo
+ petronapp django repo
