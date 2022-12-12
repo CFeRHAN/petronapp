@@ -103,7 +103,7 @@ class OtpRequestQuerySet(models.QuerySet):
             request_id=request,
             password=password,
             created__lt=current_time,
-            created__gt=current_time-timedelta(seconds=300),
+            created__gt=current_time-timedelta(seconds=900),
 
         ).exists()
 

@@ -60,6 +60,7 @@ class OTPView(APIView):
             'created':created
         }).data
 
+
 @api_view(['POST'])
 def update_password(request, password, new_password):
     user = request.user
