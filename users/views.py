@@ -57,8 +57,40 @@ class OTPView(APIView):
         return ObtainTokenSerializer({
             'refresh': str(refresh),
             'token': str(refresh.access_token),
-            'created':created
+            'created':created,
+            'user_role': user.role
         }).data
+
+
+class RegisterView(APIView):
+    def post(self, request):
+        serializer = UserSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class LoginView(APIView):
+    def post(self, request):
+        mobile = request.data['mobile']
+        password = request.data['password']
+
+        user = User.objects.get(mobile=mobile)
+        if user is None:
+            raise AuthenticationFailed('user not found')
+        
+        if not user.check_password(password):
+            raise AuthenticationFailed('incorrect password')
+        
+        payload = {
+            'id': user.id,
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=15),
+            'iat': datetime.datetime.utcnow()
+        }
+        
+        token = jwt.encode(payload, 'secret', algorithm='H256').decode('utf-8')
+
+        return Response({'jwt': 'token'})
 
 
 @api_view(['POST'])
@@ -81,6 +113,7 @@ def update_password(request, password, new_password):
 #     serializer.is_valid(raise_exception=True)
 #     serializer.save()
 #     return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 
 
 # @api_view(['POST'])

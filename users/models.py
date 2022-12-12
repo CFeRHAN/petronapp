@@ -60,7 +60,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     ]
 
     username = None
-    mobile = models.CharField(max_length=11, unique=True, blank=False, null=False)
+    mobile = models.CharField(max_length=12, unique=True, blank=False, null=False)
     password = models.CharField(max_length=255)
     type = models.CharField(choices=TYPE_CHOICES, max_length=1, default="0")    # حقیقی/ حقوقی
     role = models.CharField(choices=ROLE_CHOICES, max_length=1, default="0")    # نقش بازیگر(تریدر- تولیدکننده)
