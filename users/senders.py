@@ -32,11 +32,10 @@ def mailotp(otp):
 def send_otp(otp):
     url = settings.SMSSERVER
     data = {'recipient': otp.receiver, 'otp':otp.password }
-    try:
-        requests.post(url, data=data)
-    except requests.exceptions as e:
-        return Response(e, status=status.HTTP_400_BAD_REQUEST)
-    
+    requests.post(url, data=data)
     print("otp password")   
     print(otp.password)
     print(otp.receiver)
+    return Response(data, status=status.HTTP_200_OK)
+    
+
