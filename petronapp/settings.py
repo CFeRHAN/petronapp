@@ -63,12 +63,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    "https://example.com",
-    "https://sub.example.com",
-    "http://localhost:8000",
-    "http://127.0.0.1",
-]
+CORS_ALLOWED_ALL_ORIGINS = True
 
 
 ROOT_URLCONF = 'petronapp.urls'
