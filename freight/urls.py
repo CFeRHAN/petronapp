@@ -4,7 +4,7 @@ from .views import *
 
 
 urlpatterns = [
-    path('profile/', CreateProfileView.as_view(), name='create_profile'),
+    path('profile/<int:pk>/', create_profile, name='create_profile'),
     path('orders/', orders, name='freight_orders'),
     path('orders/<int:order_pk>/', order_detail, name='freight_order_detail'),
     path('orders/<int:order_pk>/create_offer/', create_offer, name='freight_create_offer'),

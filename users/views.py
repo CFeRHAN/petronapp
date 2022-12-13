@@ -29,7 +29,7 @@ class OTPView(APIView):
                 return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         else:
-            return Response(status=status.HTTP_400_BAD_REQUEST, data = serializer.errors)
+            return Response(status=status.HTTP_400_BAD_REQUEST, data=serializer.errors)
     def post(self, request):
         serializer = VerifyOtpRequestSerializer(data=request.data)
         if serializer.is_valid():
@@ -58,7 +58,8 @@ class OTPView(APIView):
             'refresh': str(refresh),
             'token': str(refresh.access_token),
             'created':created,
-            'user_role': user.role
+            'user_role': user.role,
+            'user_id': user.id
         }).data
 
 
@@ -104,6 +105,8 @@ def update_password(request, password, new_password):
         
 
     return Response({'success':'now you can login with your new password'}, status=status.HTTP_200_OK)
+
+
 
 
 

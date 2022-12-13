@@ -15,12 +15,34 @@ from trader.models import Trader
 from orders.models import *
 from orders.serializers import *
 
-class CreateProfileView(generics.ListCreateAPIView):
-    """APIView that creates a profile for Trader"""
+def create_profile(request, pk, format = None):
+    
+    user = request.user
+    trader = User.objects.get(mobile=user.mobile)
 
-    permission_classes = [IsAuthenticated]
-    serializer_class = CreateTraderProfileSerializer
-    queryset = Trader.objects.all()
+    if request.method == 'GET':
+        serializer = CreateTraderProfileSerializer(trader)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    elif request.method == 'PUT':
+        serializer = CreateTraderProfileSerializer(trader, data=request.data)
+        
+        if serializer.is_valid():
+            serializer.validated_data['role'] = '1'
+            serializer.save()
+
+            password = user.mobile[8:]
+            user.set_password(password)
+            user.save()
+            
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        else:
+            return Response(serializer.errors, status=status.HTTP_200_OK)
+            
+    else:
+        return Response({'message':'there is something wrong'}, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 @swagger_auto_schema(methods=['POST'], request_body=OrderSerializer)

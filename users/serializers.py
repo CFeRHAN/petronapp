@@ -22,6 +22,7 @@ class ObtainTokenSerializer(serializers.Serializer):
     refresh = serializers.CharField(max_length=128, allow_null=False)
     created = serializers.BooleanField()
     user_role = serializers.CharField(max_length=128, allow_null=True)
+    user_id = serializers.IntegerField(allow_null=True)
 
 
 

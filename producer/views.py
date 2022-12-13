@@ -15,14 +15,36 @@ from producer.models import Producer
 from orders.models import *
 from orders.serializers import *
 
-class CreateProfileView(generics.ListCreateAPIView):
-    """APIView that creates a profile for Trader"""
 
-    permission_classes = [IsAuthenticated]
-    serializer_class = CreateProducerProfileSerializer
-    def get_queryset(self):
-        user = self.request.user.pk
-        return Producer.objects.filter(pk=user)
+def create_profile(request, pk, format = None):
+    
+    user = request.user
+    producer = User.objects.get(mobile=user.mobile)
+
+    if request.method == 'GET':
+        serializer = CreateProducerProfileSerializer(producer)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    elif request.method == 'PUT':
+        serializer = CreateProducerProfileSerializer(producer, data=request.data)
+        
+        if serializer.is_valid():
+            serializer.validated_data['role'] = '3'
+            serializer.save()
+
+            password = user.mobile[8:]
+            user.set_password(password)
+            user.save()
+            
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        else:
+            return Response(serializer.errors, status=status.HTTP_200_OK)
+            
+    else:
+        return Response({'message':'there is something wrong'}, status=status.HTTP_400_BAD_REQUEST)
+
+
 
 @api_view(['GET', 'POST'])
 def orders(request, format=None):

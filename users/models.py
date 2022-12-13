@@ -61,26 +61,26 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     username = None
     mobile = models.CharField(max_length=12, unique=True, blank=False, null=False)
-    password = models.CharField(max_length=255)
-    type = models.CharField(choices=TYPE_CHOICES, max_length=1, default="0")    # حقیقی/ حقوقی
-    role = models.CharField(choices=ROLE_CHOICES, max_length=1, default="0")    # نقش بازیگر(تریدر- تولیدکننده)
-    company_name = models.CharField(max_length=50)  #نام شرکت
-    company_origin = models.CharField(choices=NATIONALITY_CHOICES, max_length=50, default="0") #ملیت شرکت
-    company_id = models.CharField(max_length=10, blank=False, null=True)    #شماره ثبت
-    company_national_id = models.CharField(max_length=10, blank=False, null=True)   #شناسه ملی
-    company_phone = models.CharField(max_length=11, blank=False, null=True, unique=True)    #شماره تماس شرکت
-    company_fax = models.CharField(max_length=11, blank=False, null=True)   #فکس
-    url = models.URLField()     #نشانی اینترنتی
-    company_address = models.TextField()    #آدرس شرکت
-    ceo_name = models.CharField(max_length=50)      #نام مدیر عامل
-    agent_name = models.CharField(max_length=50)    #نام نماینده
-    agent_phone = models.CharField(max_length=11, blank=False, null=True, unique=True)  #شماره تماس نماینده
-    agent_email = models.EmailField()   # ایمیل نماینده شرکت
-    license = models.ForeignKey(Attachment, related_name="license", on_delete=models.CASCADE, null=True)    #اساسنامه
+    password = models.CharField(max_length=255, null=True)
+    type = models.CharField(choices=TYPE_CHOICES, max_length=1, default="0")                                        # حقیقی/ حقوقی
+    role = models.CharField(choices=ROLE_CHOICES, max_length=1, default="0")                                        # نقش بازیگر(تریدر- تولیدکننده)
+    company_name = models.CharField(max_length=50)                                                                  #نام شرکت
+    company_origin = models.CharField(choices=NATIONALITY_CHOICES, max_length=50, default="0")                      #ملیت شرکت
+    company_id = models.CharField(max_length=10, blank=False, null=True)                                            #شماره ثبت
+    company_national_id = models.CharField(max_length=10, blank=False, null=True)                                   #شناسه ملی
+    company_phone = models.CharField(max_length=11, blank=False, null=True, unique=True)                            #شماره تماس شرکت
+    company_fax = models.CharField(max_length=11, blank=False, null=True)                                           #فکس
+    url = models.CharField(max_length=255)                                                                                         #نشانی اینترنتی
+    company_address = models.TextField()                                                                            #آدرس شرکت
+    ceo_name = models.CharField(max_length=50)                                                                      #نام مدیر عامل
+    agent_name = models.CharField(max_length=50)                                                                    #نام نماینده
+    agent_phone = models.CharField(max_length=11, blank=False, null=True, unique=True)                              #شماره تماس نماینده
+    agent_email = models.EmailField()                                                                               # ایمیل نماینده شرکت
+    license = models.ForeignKey(Attachment, related_name="license", on_delete=models.CASCADE, null=True)            #اساسنامه
     company_doc = models.ForeignKey(Attachment, related_name="company_doc", on_delete=models.CASCADE, null=True)    #فایل ثبت شرکت
     
-    about = models.TextField()      #درباره شرکت
-    email = models.EmailField()     #ایمیل شرکت
+    about = models.TextField()                                                                                      #درباره شرکت
+    email = models.EmailField()                                                                                     #ایمیل شرکت
 
     
     is_active = models.BooleanField(default=True)
@@ -93,7 +93,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = ["role"]
 
     def __str__(self):
-        return self.company_name
+        return self.mobile
 
 class OtpRequestQuerySet(models.QuerySet):
     def is_valid(self, receiver, request, password):

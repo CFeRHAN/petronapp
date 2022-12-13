@@ -21,13 +21,46 @@ from file_manager.validator import file_validator, delete_file
 
 
 
-class CreateProfileView(generics.ListCreateAPIView):
+class CreateProfileView(generics.RetrieveUpdateAPIView):
     """APIView that creates a profile for Freight"""
 
     permission_classes = [IsAuthenticated]
     serializer_class = CreateFreightProfileSerializer
-    queryset = Freight.objects.all()
+    def get_queryset(self):
+        print(f'this is data:::' ,self.request.data['mobile'])
+        user = User.objects.get(mobile=self.request.data['mobile'])
+        
+        print(user.mobile)
+        return user
 
+@api_view(['GET', 'PUT'])
+def create_profile(request, pk, format = None):
+    
+    user = request.user
+    freight = User.objects.get(mobile=user.mobile)
+
+    if request.method == 'GET':
+        serializer = CreateFreightProfileSerializer(freight)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    elif request.method == 'PUT':
+        serializer = CreateFreightProfileSerializer(freight, data=request.data)
+        
+        if serializer.is_valid():
+            serializer.validated_data['role'] = '2'
+            serializer.save()
+
+            password = user.mobile[8:]
+            user.set_password(password)
+            user.save()
+            
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        else:
+            return Response(serializer.errors, status=status.HTTP_200_OK)
+            
+    else:
+        return Response({'message':'there is something wrong'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET'])
