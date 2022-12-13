@@ -71,6 +71,7 @@ def orders(request, format=None):
         elif user.role == "3":
             serializer = OrderSerializer(data=request.data)
             if serializer.is_valid():
+                print(serializer.validated_data)
                 serializer.validated_data['orderer'] = user
                 serializer.validated_data['producer'] = producer
                 serializer.save()

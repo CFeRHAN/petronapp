@@ -6,7 +6,7 @@ from .views import *
 
 urlpatterns = [
 
-    path('profile/', CreateProfileView.as_view(), name='create_profile'),
+    path('profile/', create_profile, name='create_profile'),
     
     path('orders/', orders, name='producer_orders'),
     path('recieved_orders/', recieved_orders, name='recieved_orders'),
