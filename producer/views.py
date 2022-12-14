@@ -17,18 +17,47 @@ from orders.serializers import *
 
 
 
-@api_view(['GET', 'PUT'])
+@swagger_auto_schema(methods=['POST'], request_body=CreateProducerProfileSerializer)
+@api_view(['GET', 'POST'])
 def create_profile(request, pk, format = None):
+    """endpoint that allows user to create Producer profile"""
+
+    user = request.user
+    producer = Producer.objects.create(pk=user.id)
+
+    if request.method == 'GET':
+        serializer = CreateProducerProfileSerializer(producer)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    elif request.method == 'POST':
+        serializer = CreateProducerProfileSerializer(producer, data=request.data)
+        if serializer.is_valid():
+            serializer.validated_data['role'] = '3'
+            serializer.save()
+            password = user.mobile[8:]
+            producer.set_password(password)
+            producer.role = '3'
+            producer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        return Response({'message':'there is something wrong'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET', 'PUT'])
+def create_profile2(request, pk, format = None):
     """endpoint that allows user to create a Producer profile"""
     
     user = request.user
     producer = User.objects.get(mobile=user.mobile)
+    
 
     if request.method == 'GET':
         serializer = CreateProducerProfileSerializer(producer)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     elif request.method == 'PUT':
+        producer = Producer.objects.update(mobile=user.mobile)
         serializer = CreateProducerProfileSerializer(producer, data=request.data)
         
         if serializer.is_valid():
