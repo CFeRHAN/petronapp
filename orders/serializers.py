@@ -8,6 +8,13 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = '__all__'
+        read_only_fields = ['orderer', 'orderer_completion_date', 'freight_completion_date', 'ordering_date']
+
+
+class ProducerOrderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order
+        fields = '__all__'
         read_only_fields = ['orderer', 'orderer_completion_date', 'freight_completion_date', 'ordering_date', 'producer']
 
 

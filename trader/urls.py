@@ -6,7 +6,7 @@ from .views import *
 
 urlpatterns = [
 
-    path('profile/', create_profile, name='create_profile'),
+    path('profile/<int:pk>/', create_profile, name='create_profile'),
     
     path('orders/', orders, name='orders'),
     path('orders/<int:order_pk>/', order_detail, name='order_detail'),

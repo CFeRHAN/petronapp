@@ -15,7 +15,11 @@ from trader.models import Trader
 from orders.models import *
 from orders.serializers import *
 
+
+
+@api_view(['GET', 'PUT'])
 def create_profile(request, pk, format = None):
+    """endpoint that allows user to create Trader Profile"""
     
     user = request.user
     trader = User.objects.get(mobile=user.mobile)
@@ -30,9 +34,9 @@ def create_profile(request, pk, format = None):
         if serializer.is_valid():
             serializer.validated_data['role'] = '1'
             serializer.save()
-
             password = user.mobile[8:]
             user.set_password(password)
+            user.role = '1'
             user.save()
             
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -65,9 +69,13 @@ def orders(request, format=None):
         if user.role == "1":
             serializer = OrderSerializer(data=request.data)
             if serializer.is_valid():
+                serializer.validated_data['orderer_id'] = user.id
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        return Response({'message':'Method not allowed!'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @swagger_auto_schema(methods=['PUT', 'DELETE'], request_body=OrderSerializer)

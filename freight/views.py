@@ -20,19 +20,6 @@ from orders.serializers import *
 from file_manager.validator import file_validator, delete_file
 
 
-
-class CreateProfileView(generics.RetrieveUpdateAPIView):
-    """APIView that creates a profile for Freight"""
-
-    permission_classes = [IsAuthenticated]
-    serializer_class = CreateFreightProfileSerializer
-    def get_queryset(self):
-        print(f'this is data:::' ,self.request.data['mobile'])
-        user = User.objects.get(mobile=self.request.data['mobile'])
-        
-        print(user.mobile)
-        return user
-
 @api_view(['GET', 'PUT'])
 def create_profile(request, pk, format = None):
     
@@ -52,6 +39,7 @@ def create_profile(request, pk, format = None):
 
             password = user.mobile[8:]
             user.set_password(password)
+            user.role = '2'
             user.save()
             
             return Response(serializer.data, status=status.HTTP_201_CREATED)

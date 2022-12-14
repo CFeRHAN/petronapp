@@ -16,7 +16,10 @@ from orders.models import *
 from orders.serializers import *
 
 
+
+@api_view(['GET', 'PUT'])
 def create_profile(request, pk, format = None):
+    """endpoint that allows user to create a Producer profile"""
     
     user = request.user
     producer = User.objects.get(mobile=user.mobile)
@@ -34,6 +37,7 @@ def create_profile(request, pk, format = None):
 
             password = user.mobile[8:]
             user.set_password(password)
+            user.role = '3'
             user.save()
             
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -61,7 +65,7 @@ def orders(request, format=None):
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         elif user.role == "3":
             orders = Order.objects.filter(orderer=user.id)
-            serializer = OrderSerializer(orders, many=True)
+            serializer = ProducerOrderSerializer(orders, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -69,7 +73,7 @@ def orders(request, format=None):
         if user.role == "0":
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         elif user.role == "3":
-            serializer = OrderSerializer(data=request.data)
+            serializer = ProducerOrderSerializer(data=request.data)
             if serializer.is_valid():
                 print(serializer.validated_data)
                 serializer.validated_data['orderer'] = user
