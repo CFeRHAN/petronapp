@@ -70,7 +70,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     company_national_id = models.CharField(max_length=10, blank=False, null=True)                                   #شناسه ملی
     company_phone = models.CharField(max_length=11, blank=False, null=True, unique=True)                            #شماره تماس شرکت
     company_fax = models.CharField(max_length=11, blank=False, null=True)                                           #فکس
-    url = models.CharField(max_length=255)                                                                                         #نشانی اینترنتی
+    url = models.CharField(max_length=255)                                                                          #نشانی اینترنتی
     company_address = models.TextField()                                                                            #آدرس شرکت
     ceo_name = models.CharField(max_length=50)                                                                      #نام مدیر عامل
     agent_name = models.CharField(max_length=50)                                                                    #نام نماینده

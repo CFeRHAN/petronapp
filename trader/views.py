@@ -17,6 +17,7 @@ from orders.serializers import *
 
 
 
+@swagger_auto_schema(methods=['PUT'], request_body=CreateTraderProfileSerializer)
 @api_view(['GET', 'PUT'])
 def create_profile(request, pk, format = None):
     """endpoint that allows user to create Trader Profile"""
