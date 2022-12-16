@@ -17,38 +17,9 @@ from orders.serializers import *
 
 
 
-@swagger_auto_schema(methods=['POST'], request_body=CreateTraderProfileSerializer)
-@api_view(['GET', 'POST'])
-def create_profile(request, pk, format = None):
-    """endpoint that allows user to create Trader profile"""
-
-    user = request.user
-    trader = Trader.objects.create(pk=user.id)
-
-    if request.method == 'GET':
-        serializer = CreateTraderProfileSerializer(trader)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    
-    elif request.method == 'POST':
-        serializer = CreateTraderProfileSerializer(trader, data=request.data)
-        if serializer.is_valid():
-            serializer.validated_data['role'] = '1'
-            serializer.save()
-            password = user.mobile[8:]
-            trader.set_password(password)
-            trader.role = '1'
-            trader.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    else:
-        return Response({'message':'there is something wrong'}, status=status.HTTP_400_BAD_REQUEST)
-
-
-
-
 @swagger_auto_schema(methods=['PUT'], request_body=CreateTraderProfileSerializer)
 @api_view(['GET', 'PUT'])
-def create_profile2(request, pk, format = None):
+def create_profile(request, pk, format = None):
     """endpoint that allows user to create Trader Profile"""
     
     user = request.user
@@ -59,20 +30,23 @@ def create_profile2(request, pk, format = None):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     elif request.method == 'PUT':
-        serializer = CreateTraderProfileSerializer(trader, data=request.data)
         
-        if serializer.is_valid():
-            serializer.validated_data['role'] = '1'
-            serializer.save()
-            password = user.mobile[8:]
-            user.set_password(password)
-            user.role = '1'
-            # user.save()
-            
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        if user.role == "0":
+            serializer = CreateTraderProfileSerializer(trader, data=request.data)
+            if serializer.is_valid():
+                serializer.validated_data['role'] = '1'
+                serializer.save()
+                password = user.mobile[8:]
+                trader.set_password(password)
+                trader.role = '1'
+                trader.save()
+                
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+            else:
+                return Response(serializer.errors, status=status.HTTP_200_OK)
         else:
-            return Response(serializer.errors, status=status.HTTP_200_OK)
+            return Response({'message':'you already have a profile'}, status=status.HTTP_400_BAD_REQUEST)
             
     else:
         return Response({'message':'there is something wrong'}, status=status.HTTP_400_BAD_REQUEST)

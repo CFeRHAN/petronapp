@@ -7,6 +7,7 @@ from .views import *
 urlpatterns = [
 
     path('profile/<int:pk>/', create_profile, name='create_profile'),
+    path('vieW_all_producers/', vieW_all_producers, name='vieW_all_producers'),
     
     path('orders/', orders, name='producer_orders'),
     path('recieved_orders/', recieved_orders, name='recieved_orders'),

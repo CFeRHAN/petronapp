@@ -4,7 +4,9 @@ from users.models import User
 
 class Trader(User):
     """Model For Trader"""
-    pass
+
+    def create(self, mobile, role=1):
+        trader = self.model(mobile=mobile, role=role)
 
     # def __str__(self):
     #     return self.User.family_name

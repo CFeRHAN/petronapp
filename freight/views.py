@@ -20,29 +20,37 @@ from orders.serializers import *
 from file_manager.validator import file_validator, delete_file
 
 
-@swagger_auto_schema(methods=['POST'], request_body=CreateFreightProfileSerializer)
-@api_view(['GET', 'POST'])
+@swagger_auto_schema(methods=['PUT'], request_body=CreateFreightProfileSerializer)
+@api_view(['GET', 'PUT'])
 def create_profile(request, pk, format = None):
-    """endpoint that allows user to create Producer profile"""
-
+    """endpoint that allows user to create Freight Profile"""
+    
     user = request.user
-    freight = Freight.objects.create(pk=user.id)
+    freight = User.objects.get(mobile=user.mobile)
 
     if request.method == 'GET':
         serializer = CreateFreightProfileSerializer(freight)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
-    elif request.method == 'POST':
-        serializer = CreateFreightProfileSerializer(freight, data=request.data)
-        if serializer.is_valid():
-            serializer.validated_data['role'] = '3'
-            serializer.save()
-            password = user.mobile[8:]
-            freight.set_password(password)
-            freight.role = '3'
-            freight.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    elif request.method == 'PUT':
+        
+        if user.role == "0":
+            serializer = CreateFreightProfileSerializer(freight, data=request.data)
+            if serializer.is_valid():
+                serializer.validated_data['role'] = '2'
+                serializer.save()
+                password = user.mobile[8:]
+                freight.set_password(password)
+                freight.role = '2'
+                freight.save()
+                
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+            else:
+                return Response(serializer.errors, status=status.HTTP_200_OK)
+        else:
+            return Response({'message':'you already have a profile'}, status=status.HTTP_400_BAD_REQUEST)
+            
     else:
         return Response({'message':'there is something wrong'}, status=status.HTTP_400_BAD_REQUEST)
 

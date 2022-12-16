@@ -17,29 +17,38 @@ from orders.serializers import *
 
 
 
-@swagger_auto_schema(methods=['POST'], request_body=CreateProducerProfileSerializer)
-@api_view(['GET', 'POST'])
+@swagger_auto_schema(methods=['PUT'], request_body=CreateProducerProfileSerializer)
+@api_view(['GET', 'PUT'])
 def create_profile(request, pk, format = None):
-    """endpoint that allows user to create Producer profile"""
-
+    """endpoint that allows user to create Producer Profile"""
+    
     user = request.user
-    producer = Producer.objects.create(pk=user.id)
+    
+    producer = User.objects.get(mobile=user.mobile)
 
     if request.method == 'GET':
         serializer = CreateProducerProfileSerializer(producer)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
-    elif request.method == 'POST':
-        serializer = CreateProducerProfileSerializer(producer, data=request.data)
-        if serializer.is_valid():
-            serializer.validated_data['role'] = '3'
-            serializer.save()
-            password = user.mobile[8:]
-            producer.set_password(password)
-            producer.role = '3'
-            producer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    elif request.method == 'PUT':
+        
+        if user.role == "0":
+            serializer = CreateProducerProfileSerializer(producer, data=request.data)
+            if serializer.is_valid():
+                serializer.validated_data['role'] = '3'
+                serializer.save()
+                password = user.mobile[8:]
+                producer.set_password(password)
+                producer.role = '3'
+                producer.save()
+                
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+            else:
+                return Response(serializer.errors, status=status.HTTP_200_OK)
+        else:
+            return Response({'message':'you already have a profile'}, status=status.HTTP_400_BAD_REQUEST)
+            
     else:
         return Response({'message':'there is something wrong'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -642,3 +651,14 @@ def order_completion_approval(request, order_pk, offer_pk, format=None):
 
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+
+@api_view(['GET'])
+def vieW_all_producers(request, format=None):
+    user = request.user
+    if user.role != '0' :
+        producers = Producer.objects.all()
+        serializer = ProducerSerializer(producers, many=True)
+        return Response(serializer.data, status = status.HTTP_200_OK)
+
