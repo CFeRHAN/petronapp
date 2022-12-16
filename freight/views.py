@@ -196,12 +196,12 @@ def create_offer(request, order_pk, format=None):
         return Response(status=status.HTTP_404_NOT_FOUND)
     
     if user.role == "0":
-        return Response(status=status.HTTP_401_UNAUTHORIZED)
+        return Response({'message':'You are not Authorized for the system'},status=status.HTTP_401_UNAUTHORIZED)
     
     elif user.role == "2":
-        serializer = CreateOfferSerializer(data=request.data)
+        serializer = CreateOfferSerializer(order, data=request.data)
         if serializer.is_valid():
-            freight = Freight.objects.get(id=user.id)
+            freight = User.objects.get(id=user.id)
             
             serializer.validated_data['freight'] = freight
             serializer.validated_data['order'] = order
