@@ -46,10 +46,10 @@ class Order(models.Model):
     ]
 
     orderer = models.ForeignKey(User, on_delete=models.CASCADE, related_name="orderer")
-    producer = models.ForeignKey(Producer, on_delete=models.CASCADE, related_name="petro_seller_co")
+    producer = models.ForeignKey(User, on_delete=models.CASCADE, related_name="petro_seller_co")
     contract_type = models.CharField(max_length=1, choices=TYPE_CHOICES, null=True, blank=False)
     ordering_date = models.DateTimeField(auto_now_add=True, blank=False)
-    order_number = models.ForeignKey(PaperWork, on_delete=models.CASCADE, related_name='orderer_order_number')
+    order_number = models.ForeignKey(PaperWork, on_delete=models.CASCADE, related_name='orderer_order_number', blank=True, null=True)
     product = models.CharField(max_length=200, blank=False)
     weight = models.FloatField(blank=False)
     vehicle_type = models.CharField(max_length=200, blank=False)
@@ -77,7 +77,7 @@ class Offer(models.Model):
     """Model for offers that are made by the Freight company"""
 
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    freight = models.ForeignKey(Freight, on_delete=models.CASCADE, null=True)
+    freight = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     price = models.FloatField(blank=False, null=True)
     orderer_acception = models.BooleanField(default=False)
     freight_acception = models.BooleanField(default=False)

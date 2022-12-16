@@ -93,7 +93,7 @@ def orders(request, format=None):
     """Creates new order with POST / Returns a list of orders with GET"""
     
     user = request.user
-    producer = Producer.objects.get(pk=user.id)
+    producer = User.objects.get(pk=user.id)
 
     if request.method == 'GET':
         print(user)
