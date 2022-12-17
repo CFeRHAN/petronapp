@@ -658,7 +658,9 @@ def order_completion_approval(request, order_pk, offer_pk, format=None):
 def vieW_all_producers(request, format=None):
     user = request.user
     if user.role != '0' :
-        producers = Producer.objects.all()
+        producers = User.objects.filter(role='3')
         serializer = ProducerSerializer(producers, many=True)
         return Response(serializer.data, status = status.HTTP_200_OK)
+    else:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
