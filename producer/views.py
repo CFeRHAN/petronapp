@@ -35,17 +35,18 @@ def create_profile(request, pk, format = None):
             serializer = CreateProducerProfileSerializer(producer, data=request.data)
             if serializer.is_valid():
 
-                if serializer.validated_data['profile_picture']:
-                    params = serializer.validated_data['profile_picture']
+                if 'profile_picture_file' in serializer.validated_data and serializer.validated_data['profile_picture_file']:
+                    params = serializer.validated_data['profile_picture_file']
                     uploader_validator(params)
 
-                if serializer.validated_data['license']:
-                    params = serializer.validated_data['license']
+                if 'license_file' in serializer.validated_data and serializer.validated_data['license_file']:
+                    params = serializer.validated_data['license_file']
                     uploader_validator(params)
 
-                if serializer.validated_data['company_doc']:
-                    params = serializer.validated_data['company_doc']
+                if 'company_doc_file' in serializer.validated_data and serializer.validated_data['company_doc_file']:
+                    params = serializer.validated_data['company_doc_file']
                     uploader_validator(params)
+                    
 
                 serializer.validated_data['role'] = '3'
                 serializer.save()

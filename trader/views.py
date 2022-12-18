@@ -35,12 +35,16 @@ def create_profile(request, pk, format = None):
             serializer = CreateTraderProfileSerializer(trader, data=request.data)
             if serializer.is_valid():
 
-                if serializer.validated_data['license']:
-                    params = serializer.validated_data['license']
+                if 'profile_picture_file' in serializer.validated_data and serializer.validated_data['profile_picture_file']:
+                    params = serializer.validated_data['profile_picture_file']
                     uploader_validator(params)
 
-                if serializer.validated_data['company_doc']:
-                    params = serializer.validated_data['company_doc']
+                if 'license_file' in serializer.validated_data and serializer.validated_data['license_file']:
+                    params = serializer.validated_data['license_file']
+                    uploader_validator(params)
+
+                if 'company_doc_file' in serializer.validated_data and serializer.validated_data['company_doc_file']:
+                    params = serializer.validated_data['company_doc_file']
                     uploader_validator(params)
 
                 serializer.validated_data['role'] = '1'

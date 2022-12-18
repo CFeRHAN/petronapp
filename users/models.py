@@ -60,7 +60,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     ]
 
     username = None
-    profile_picture_file = models.CharField(max_length=35)
+    profile_picture_file = models.CharField(max_length=35, null=True, blank=True)
     mobile = models.CharField(max_length=12, unique=True, blank=False, null=False)
     password = models.CharField(max_length=255, null=True, blank=True)
     type = models.CharField(choices=TYPE_CHOICES, max_length=1, default="0")                                        # حقیقی/ حقوقی
@@ -69,16 +69,16 @@ class User(AbstractBaseUser, PermissionsMixin):
     company_origin = models.CharField(choices=NATIONALITY_CHOICES, max_length=50, default="0")                      #ملیت شرکت
     company_id = models.CharField(max_length=10)                                                                    #شماره ثبت
     company_national_id = models.CharField(max_length=10)                                                           #شناسه ملی
-    company_phone = models.CharField(max_length=11, blank=True, null=True)     # DONT need to be unique             #شماره تماس شرکت
+    company_phone = models.CharField(max_length=11, blank=True, null=True)                                          #شماره تماس شرکت
     company_fax = models.CharField(max_length=11, blank=True, null=True)                                            #فکس
     url = models.CharField(max_length=255)                                                                          #نشانی اینترنتی
     company_address = models.TextField()                                                                            #آدرس شرکت
     ceo_name = models.CharField(max_length=50)                                                                      #نام مدیر عامل
     agent_name = models.CharField(max_length=50)                                                                    #نام نماینده
-    agent_phone = models.CharField(max_length=11, blank=True, null=True)       # DONT need to be unique             #شماره تماس نماینده
+    agent_phone = models.CharField(max_length=11, blank=True, null=True)                                            #شماره تماس نماینده
     agent_email = models.EmailField()                                                                               # ایمیل نماینده شرکت
-    license_file = models.CharField(max_length=35)            #اساسنامه
-    company_doc_file = models.CharField(max_length=35)    #فایل ثبت شرکت
+    license_file = models.CharField(max_length=35, null=False, blank=False)                                         # اساسنامه
+    company_doc_file = models.CharField(max_length=35, null=False, blank=False)                                     # فایل ثبت شرکت
     
     about = models.TextField()                                                                                      #درباره شرکت
     email = models.EmailField()                                                                                     #ایمیل شرکت

@@ -39,22 +39,22 @@ def create_profile(request, pk, format = None):
             serializer = CreateFreightProfileSerializer(freight, data=request.data)
             if serializer.is_valid():
                 
-                if serializer.validated_data['profile_picture']:
-                    params = serializer.validated_data['profile_picture']
+                if 'profile_picture_file' in serializer.validated_data and serializer.validated_data['profile_picture_file']:
+                    params = serializer.validated_data['profile_picture_file']
                     uploader_validator(params)
 
-                if serializer.validated_data['license']:
-                    params = serializer.validated_data['license']
+                if 'license_file' in serializer.validated_data and serializer.validated_data['license_file']:
+                    params = serializer.validated_data['license_file']
                     uploader_validator(params)
 
-                if serializer.validated_data['company_doc']:
-                    params = serializer.validated_data['company_doc']
+                if 'company_doc_file' in serializer.validated_data and serializer.validated_data['company_doc_file']:
+                    params = serializer.validated_data['company_doc_file']
                     uploader_validator(params)
                     
-                if serializer.validated_data['permission']:
-                    params = serializer.validated_data['permission']
+                if 'permission_file' in serializer.validated_data and serializer.validated_data['permission_file']:
+                    params = serializer.validated_data['permission_file']
                     uploader_validator(params)
-                
+                    
     
                 serializer.validated_data['role'] = '2'
                 serializer.save()
@@ -68,7 +68,6 @@ def create_profile(request, pk, format = None):
             return Response({'message':'you already have a profile'}, status=status.HTTP_400_BAD_REQUEST)
     else:
         return Response({'message':'there is something wrong'}, status=status.HTTP_400_BAD_REQUEST)
-
 
 '''
 @api_view(['GET', 'PUT'])
