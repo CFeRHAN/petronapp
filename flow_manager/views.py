@@ -24,19 +24,19 @@ def flow_manager(request, order_pk, offer_pk, format=None):
     if offer.final_payment.status == True:
         return Response({'next_step': 'you are done!'}, status=status.HTTP_200_OK)
     
-    elif offer.final_payment.receipt_id != None:
+    elif offer.final_payment.receipt_file != None:
         return Response({'next_step': 'final_payment_confirmation', 'user_role':'2'}, status=status.HTTP_200_OK)
     
     elif offer.inventory.receipt_status == True:
         return Response({'next_step':'upload_final_payment_reciept', 'user_role':'1'}, status=status.HTTP_200_OK)
     
-    elif offer.inventory.receipt_id != None:
+    elif offer.inventory.receipt_file != None:
         return Response({'next_step': 'inventory_receipt_confirmation', 'user_role':'3'}, status=status.HTTP_200_OK)
     
     elif offer.demurrage.receipt_status == True:
         return Response({'next_step':'final_payment_reciept', 'user_role':'1'}, status=status.HTTP_200_OK)
 
-    elif offer.demurrage.receipt_id != None:
+    elif offer.demurrage.receipt_file != None:
         return Response({'next_step': 'inventory_receipt_confirmation', 'user_role':'3'}, status=status.HTTP_200_OK)
 
     elif order.orderer_completion_date != None:
@@ -51,40 +51,40 @@ def flow_manager(request, order_pk, offer_pk, format=None):
     elif offer.bijak.status == True:
         return Response({'next_step':'freight_completion_approval', 'user_role':'2'}, status=status.HTTP_200_OK)
 
-    elif offer.bijak.bill_id != None:
+    elif offer.bijak.bill_file != None:
         return Response ({'next_step':'bijak_confirmation', 'user_role':'2'}, status=status.HTTP_200_OK)
     
     elif offer.lading_bill.status == True:
         return Response({'next_step': 'upload_bijak bill', 'user_role':'3'}, status=status.HTTP_200_OK)
     
-    elif offer.lading_bill.bill_id != None:
+    elif offer.lading_bill.bill_file != None:
         return Response({'next_step': 'lading_bill_confirmation', 'user_role':'1'}, status=status.HTTP_200_OK)
 
     elif offer.invoice_packing.status == True:
         return Response({'next_step': 'upload_lading_bill', 'user_role':'2'}, status=status.HTTP_200_OK)
     
-    elif offer.invoice_packing.bill_id != None:
+    elif offer.invoice_packing.bill_file != None:
         return Response({'next_step': 'invocie_packing_confirmation', 'user_role':'2'}, status=status.HTTP_200_OK)
     
-    elif offer.load_info.bill_id != None:
+    elif offer.load_info.bill_file != None:
         return Response({'next_step': 'upload_invoice_packing', 'user_role':'3'}, status=status.HTTP_200_OK)
 
     elif offer.prepayment.bill_status == True:
         return Response({'next_step': 'upload_load_info bill', 'user_role':'3'}, status=status.HTTP_200_OK)
     
-    elif offer.prepayment.receipt_id != None:
+    elif offer.prepayment.receipt_file != None:
         return Response({'next_step': 'prepayment_reciept_confirmation', 'user_role':'2'}, status=status.HTTP_200_OK)
     
     elif offer.demurrage.bill_status == True:
         return Response({'next_step':'upload_prepayment_reciept', 'user_role':'1'}, status=status.HTTP_200_OK)
 
-    elif offer.demurrage.receipt_id != None:
+    elif offer.demurrage.receipt_file != None:
         return Response({'next_step': 'inventory_receipt_confirmation', 'user_role':'3'}, status=status.HTTP_200_OK)
         
     elif offer.inventory.bill_status == True:
         return Response({'next_step':'upload_prepayment_reciept', 'user_role':'1'}, status=status.HTTP_200_OK)
 
-    elif offer.inventory.bill_id != None:
+    elif offer.inventory.bill_file != None:
         return Response({'next_step': 'inventory_bill_confirmation', 'user_role':'2'}, status=status.HTTP_200_OK)
 
     elif offer.drivers_info != None:

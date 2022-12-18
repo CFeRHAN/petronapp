@@ -11,8 +11,8 @@ from users.models import User
 class Payment(models.Model):
     """model for covering all payment methods"""
     
-    bill_id = models.CharField(max_length=35, blank=True, null=True)
-    receipt_id = models.CharField(max_length=35, blank=True, null=True)
+    bill_file = models.CharField(max_length=35, blank=True, null=True)
+    receipt_file = models.CharField(max_length=35, blank=True, null=True)
     price = models.FloatField(blank=False)
     payment_date = models.DateField(null=False, blank=False)
     bill_status = models.BooleanField(default=False)
@@ -21,19 +21,19 @@ class Payment(models.Model):
     receipt_rejection_reasons = models.TextField(blank=True)
 
     def __str__(self):
-        return str(self.bill_id)
+        return str(self.bill_file)
 
 
 class PaperWork(models.Model):
     """model for covering all paper works"""
     
-    bill_id = models.CharField(max_length=35)
+    bill_file = models.CharField(max_length=35)
     upload_date = models.DateField(null=False, blank=False)
     status = models.BooleanField(default=False)
     rejection_reasons = models.TextField(blank=True)
 
     def __str__(self):
-        return str(self.bill_id)
+        return str(self.bill_file)
 
 
 class Order(models.Model):

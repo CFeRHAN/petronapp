@@ -86,7 +86,7 @@ class ViewDriversInfoSerializer(serializers.ModelSerializer):
 class UploadInventoryBillSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
-        exclude = ['receipt_id', 'receipt_status', 'bill_rejection_reasons']
+        exclude = ['receipt_file', 'receipt_status', 'bill_rejection_reasons']
 
 
 class ViewDemurrageBillSerializer(serializers.ModelSerializer):
@@ -99,21 +99,21 @@ class ViewDemurrageBillSerializer(serializers.ModelSerializer):
 class UploadPaymentBillSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
-        exclude = ['bill_id', 'bill_status', 'bill_rejection_reasons']
+        exclude = ['bill_file', 'bill_status', 'bill_rejection_reasons']
 
 
 class ConfirmPrepaymentRecieptSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
-        exclude = ['bill_id', 'price', 'payment_date']
+        exclude = ['bill_file', 'price', 'payment_date']
 
 
 
 class ConfirmPrepaymentReceiptSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
-        fields = ['receipt_id', 'bill_id', 'bill_status', 'receipt_rejection_reasons']
-        read_only_fields = ['receipt_id', 'bill_id']
+        fields = ['receipt_file', 'bill_file', 'bill_status', 'receipt_rejection_reasons']
+        read_only_fields = ['receipt_file', 'bill_file']
 
 
 class UploadLoadInfoBillSerializer(serializers.ModelSerializer):
@@ -132,27 +132,27 @@ class ConfirmLadingBillSerializer(serializers.ModelSerializer):
     class Meta:
         model = PaperWork
         fields = ['status','rejection_reasons']
-        read_only_fields = ['bill_id']
+        read_only_fields = ['bill_file']
 
 
 class ConfirmInventoryReceiptSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
-        fields = ['receipt_status', 'receipt_rejection_reasons', 'receipt_id']
-        read_only_fields = ['receipt_id']
+        fields = ['receipt_status', 'receipt_rejection_reasons', 'receipt_file']
+        read_only_fields = ['receipt_file']
 
 
 class UploadDemurrageReceiptSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
-        fields = ['receipt_id']
-        read_only_fields = ['bill_id']
+        fields = ['receipt_file']
+        read_only_fields = ['bill_file']
 
 
 class UploadBijakBillSerializer(serializers.ModelSerializer):
     class Meta:
         model = PaperWork
-        fields = ['bill_id']
+        fields = ['bill_file']
 
 
 class DefineSecondDestinationSerializer(serializers.ModelSerializer):
@@ -165,8 +165,8 @@ class DefineSecondDestinationSerializer(serializers.ModelSerializer):
 class ConfirmSecondDestinationBillSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
-        fields = ['bill_status','bill_rejection_reasons','bill_id']
-        read_only_fields = ['bill_id']
+        fields = ['bill_status','bill_rejection_reasons','bill_file']
+        read_only_fields = ['bill_file']
 
 
 class OrderCompletionAprroveserializer(serializers.ModelSerializer):
@@ -179,34 +179,34 @@ class OrderCompletionAprroveserializer(serializers.ModelSerializer):
 class UploadDriversInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = PaperWork
-        fields = ['bill_id']
+        fields = ['bill_file']
 
 
 class UploadDemurrageBillSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
-        fields = ['bill_id', 'price']
+        fields = ['bill_file', 'price']
 
 
 class ConfirmInventoryBillSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
-        fields = ['bill_id', 'bill_status','bill_rejection_reasons']
-        read_only_fields = ['bill_id']
+        fields = ['bill_file', 'bill_status','bill_rejection_reasons']
+        read_only_fields = ['bill_file']
 
 
 class ConfirmDemurrageBillSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
-        fields = ['bill_id', 'bill_status','bill_rejection_reasons']
-        read_only_fields = ['bill_id']
+        fields = ['bill_file', 'bill_status','bill_rejection_reasons']
+        read_only_fields = ['bill_file']
 
 
 class ConfrimPrepaymentBillSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
-        fields = ['bill_status','bill_rejection_reasons', 'bill_id']
-        read_only_fields = ['bill_id']
+        fields = ['bill_status','bill_rejection_reasons', 'bill_file']
+        read_only_fields = ['bill_file']
 
 
 class ViewLoadInfoSerializer(serializers.ModelSerializer):
@@ -219,41 +219,41 @@ class ViewLoadInfoSerializer(serializers.ModelSerializer):
 class UploadLadingBillSerializer(serializers.ModelSerializer):
     class Meta:
         model = PaperWork
-        fields = ['bill_id']
+        fields = ['bill_file']
 
 
 class UploadInventoryReceiptSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
-        fields = ['receipt_id', 'bill_id']
-        read_only_fields = ['bill_id']
+        fields = ['receipt_file', 'bill_file']
+        read_only_fields = ['bill_file']
 
 
 class ConfirmDemurrageReceiptSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
         fields = ['receipt_status', 'receipt_rejection_reasons']
-        read_only_fields = ['bill_id']
+        read_only_fields = ['bill_file']
 
 
 class ConfirmBijakBillSerializer(serializers.ModelSerializer):
     class Meta:
         model = PaperWork
         fields = ['status', 'rejection_reasons']
-        read_only_fields = ['bill_id']
+        read_only_fields = ['bill_file']
 
 
 class UploadSecondDestinationBillSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
-        fields = ['bill_id']
+        fields = ['bill_file']
 
 
 class ConfirmFinalPaymentReceiptSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
         fields = ['receipt_status', 'receipt_rejection_reasons']
-        read_only_fields = ['bill_id']
+        read_only_fields = ['bill_file']
 
 
 class OfferSelectionSerializer(serializers.ModelSerializer):
@@ -265,26 +265,26 @@ class OfferSelectionSerializer(serializers.ModelSerializer):
 class UploadPrepaymentBillSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
-        fields = ['bill_id']
+        fields = ['bill_file']
 
 
 class UploadPrepaymentReceiptSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
-        fields = ['receipt_id']
+        fields = ['receipt_file']
 
 
 class ViewDealDraftSerializer(serializers.ModelSerializer):
     class Meta:
         model = PaperWork
-        fields = ['bill_id']
+        fields = ['bill_file']
 
 
 class UploadFinalPaymentReceipt(serializers.ModelSerializer):
     class Meta:
         model = Payment
-        fields = ['bill_id', 'receipt_id']
-        read_only_fields = ['bill_id']
+        fields = ['bill_file', 'receipt_file']
+        read_only_fields = ['bill_file']
 
 
 class UploadOrderNumberSerializer(serializers.ModelSerializer):
