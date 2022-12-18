@@ -283,15 +283,16 @@ def send_order_number(request, order_pk, offer_pk):
     
     elif user.role == "1":
         order = Order.objects.get(pk=order_pk)
-        x = order.order_number
-        y = offer.order_number
-        order_number = PaperWork.objects.get(pk=y)
-        serializer = ViewOrderNumberSerializer(order_number, data=request.data)
+
+        order_number = order.order_number_file
+        offer.order_number_file = order_number
+
+        serializer = ViewOrderNumberSerializer(offer.order_number_file, data=request.data)
         if serializer.is_valid():
-            serializer.validated_data['order_number'] = x
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        return Response({'message': 'there is something wrong with in the serializer or data'}, status=status.HTTP_400_BAD_REQUEST)
     
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST)

@@ -97,7 +97,7 @@ class Offer(models.Model):
     bijak = models.ForeignKey(PaperWork, on_delete=models.DO_NOTHING, related_name='bijak', null=True, blank=True)
     invoice_packing = models.ForeignKey(PaperWork, on_delete=models.DO_NOTHING, related_name='invoice_packing', null=True, blank=True)
     order_number = models.CharField(max_length=35, null=True, blank=True)
-    order_number_file = models.ForeignKey(PaperWork, on_delete=models.DO_NOTHING, related_name='order_number', null=True, blank=True)
+    order_number_file = models.CharField(max_length=35, null=True, blank=True)
     
     deal_draft = models.ForeignKey(PaperWork, on_delete=models.DO_NOTHING, related_name='prescript', null=True, blank=True)
     load_info = models.ForeignKey(PaperWork, on_delete=models.DO_NOTHING, related_name='load_info', null=True, blank=True)
