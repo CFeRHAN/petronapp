@@ -7,4 +7,4 @@ class CreateTraderProfileSerializer(serializers.ModelSerializer):
     """Serializer for creating a new trader profile"""
     class Meta:
         model = Trader
-        exclude = ['is_active','is_staff','is_superuser', 'groups', 'user_permissions']
+        exclude = ['is_active','is_staff','is_superuser', 'groups', 'user_permissions', 'last_login', 'role']

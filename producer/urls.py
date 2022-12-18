@@ -7,7 +7,6 @@ from .views import *
 urlpatterns = [
 
     path('profile/<int:pk>/', create_profile, name='create_profile'),
-    path('vieW_all_producers/', vieW_all_producers, name='vieW_all_producers'),
     
     path('orders/', orders, name='producer_orders'),
     path('recieved_orders/', recieved_orders, name='recieved_orders'),
@@ -31,4 +30,5 @@ urlpatterns = [
     path('orders/<int:order_pk>/offers/<int:offer_pk>/second_destination_bill/', confirm_second_destination_bill, name='confirm_second_destination_bill'),
     path('orders/<int:order_pk>/offers/<int:offer_pk>/completion_approval/', order_completion_approval, name='order_completion_approval'),
 
+    path('', view_all_producers, name='get_all_producers'),
 ]

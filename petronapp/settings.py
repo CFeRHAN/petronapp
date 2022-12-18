@@ -143,9 +143,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'users.User'
 
 
-SMSSERVER = 'http://45.139.10.161:8092/sms/otp/'
-
-
 REST_FRAMEWORK = {
     
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -154,6 +151,10 @@ REST_FRAMEWORK = {
     )
 }
 
+# Const URLs
+
+SMSSERVER = 'http://45.139.10.161:8092/sms/otp/'
+UPLOADER_URL = 'http://45.139.10.161:8091/uploader/'
 
 # # Django JWT Settings
 

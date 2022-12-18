@@ -12,10 +12,10 @@ from users.models import User
 class Payment(models.Model):
     """model for covering all payment methods"""
     
-    bill_id = models.ForeignKey(Attachment, on_delete=models.CASCADE, related_name="payment_bill", blank=True, null=True)
-    receipt_id = models.ForeignKey(Attachment, on_delete=models.CASCADE, related_name='payment_receipt', blank=True, null=True)
+    bill_id = models.CharField(max_length=35, blank=True, null=True)
+    receipt_id = models.CharField(max_length=35, blank=True, null=True)
     price = models.FloatField(blank=False)
-    payment_date = models.DateField(null=True, blank=False)
+    payment_date = models.DateField(null=False, blank=False)
     bill_status = models.BooleanField(default=False)
     bill_rejection_reasons = models.TextField(blank=True)
     receipt_status = models.BooleanField(default=False)
@@ -29,7 +29,7 @@ class PaperWork(models.Model):
     """model for covering all paper works"""
     
     bill_id = models.ForeignKey(Attachment, on_delete=models.DO_NOTHING)
-    upload_date = models.DateField(null=True, blank=False)
+    upload_date = models.DateField(null=False, blank=False)
     status = models.BooleanField(default=False)
     rejection_reasons = models.TextField(blank=True)
 
@@ -46,20 +46,21 @@ class Order(models.Model):
     ]
 
     orderer = models.ForeignKey(User, on_delete=models.CASCADE, related_name="orderer")
-    producer = models.ForeignKey(User, on_delete=models.CASCADE, related_name="petro_seller_co")
-    contract_type = models.CharField(max_length=1, choices=TYPE_CHOICES, null=True, blank=False)
+    producer = models.ForeignKey(User, on_delete=models.CASCADE, related_name="petro_seller_co")        # Producer !!!
+    contract_type = models.CharField(max_length=1, choices=TYPE_CHOICES, null=False, blank=False)
     ordering_date = models.DateTimeField(auto_now_add=True, blank=False)
-    order_number = models.ForeignKey(PaperWork, on_delete=models.CASCADE, related_name='orderer_order_number', blank=True, null=True)
+    order_number = models.CharField(max_length=35, null=True, blank=True)
+    order_number_file = models.CharField(max_length=35, null=True, blank=True)
     product = models.CharField(max_length=200, blank=False)
     weight = models.FloatField(blank=False)
     vehicle_type = models.CharField(max_length=200, blank=False)
     loading_location = models.CharField(max_length=200, blank=False)
     destination = models.CharField(max_length=200, blank=False)
-    second_destination = models.CharField(max_length=200, blank=True)
+    second_destination = models.CharField(max_length=200, null=True, blank=True)
     loading_date = models.DateTimeField(auto_now_add=False, blank=False)
-    border_passage = models.CharField(max_length=100, blank=True, null=True)
-    description = models.TextField(blank=True)
-    proforma = models.ForeignKey(Attachment, related_name="proforma", on_delete=models.CASCADE, null=True)
+    border_passage = models.CharField(max_length=100, null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
+    proforma_file = models.CharField(max_length=35)
     orderer_completion_date = models.DateTimeField(null=True, blank=True)  # change this to datetime field
     freight_completion_date = models.DateTimeField(null=True, blank=True)  # change this to datetime field
 
@@ -78,10 +79,10 @@ class Offer(models.Model):
 
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     freight = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-    price = models.FloatField(blank=False, null=True)
+    price = models.FloatField(blank=False, null=False)
     orderer_acception = models.BooleanField(default=False)
     freight_acception = models.BooleanField(default=False)
-    prepayment_percentage = models.PositiveIntegerField(blank=True, null=True,validators=[MaxValueValidator(100), MinValueValidator(0)])
+    prepayment_percentage = models.PositiveIntegerField(blank=True, null=True, validators=[MaxValueValidator(100), MinValueValidator(0)])
     
     # PAYMENT
     # we use revert usecase for bill and reciept in prepayment just not to make another field for confirm prepayment
@@ -96,7 +97,8 @@ class Offer(models.Model):
     drivers_info = models.ForeignKey(PaperWork, on_delete=models.DO_NOTHING, related_name='drivers_info', null=True, blank=True)
     bijak = models.ForeignKey(PaperWork, on_delete=models.DO_NOTHING, related_name='bijak', null=True, blank=True)
     invoice_packing = models.ForeignKey(PaperWork, on_delete=models.DO_NOTHING, related_name='invoice_packing', null=True, blank=True)
-    order_number = models.ForeignKey(PaperWork, on_delete=models.DO_NOTHING, related_name='order_number', null=True, blank=True)
+    order_number_file = models.ForeignKey(PaperWork, on_delete=models.DO_NOTHING, related_name='order_number', null=True, blank=True)
+    order_number = models.CharField(max_length=35, null=True, blank=True)
     deal_draft = models.ForeignKey(PaperWork, on_delete=models.DO_NOTHING, related_name='prescript', null=True, blank=True)
     load_info = models.ForeignKey(PaperWork, on_delete=models.DO_NOTHING, related_name='load_info', null=True, blank=True)
 

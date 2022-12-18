@@ -15,37 +15,46 @@ from producer.models import Producer
 from orders.models import *
 from orders.serializers import *
 
+from utils.validator import uploader_validator
 
 
-@swagger_auto_schema(methods=['PUT'], request_body=CreateProducerProfileSerializer)
-@api_view(['GET', 'PUT'])
+@swagger_auto_schema(methods=['POST'], request_body=CreateProducerProfileSerializer)
+@api_view(['GET', 'POST'])
 def create_profile(request, pk, format = None):
     """endpoint that allows user to create Producer Profile"""
     
-    user = request.user
-    
-    producer = User.objects.get(mobile=user.mobile)
+    user = request.user    
+    producer = User.objects.get(pk=user.id)
 
     if request.method == 'GET':
         serializer = CreateProducerProfileSerializer(producer)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    elif request.method == 'PUT':
-        
+    elif request.method == 'POST':
         if user.role == "0":
             serializer = CreateProducerProfileSerializer(producer, data=request.data)
             if serializer.is_valid():
+
+                if serializer.validated_data['profile_picture']:
+                    params = serializer.validated_data['profile_picture']
+                    uploader_validator(params)
+
+                if serializer.validated_data['license']:
+                    params = serializer.validated_data['license']
+                    uploader_validator(params)
+
+                if serializer.validated_data['company_doc']:
+                    params = serializer.validated_data['company_doc']
+                    uploader_validator(params)
+
                 serializer.validated_data['role'] = '3'
                 serializer.save()
                 password = user.mobile[8:]
                 producer.set_password(password)
                 producer.role = '3'
                 producer.save()
-                
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-            else:
-                return Response(serializer.errors, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response({'message':'you already have a profile'}, status=status.HTTP_400_BAD_REQUEST)
             
@@ -53,6 +62,7 @@ def create_profile(request, pk, format = None):
         return Response({'message':'there is something wrong'}, status=status.HTTP_400_BAD_REQUEST)
 
 
+'''
 @api_view(['GET', 'PUT'])
 def create_profile2(request, pk, format = None):
     """endpoint that allows user to create a Producer profile"""
@@ -85,14 +95,16 @@ def create_profile2(request, pk, format = None):
             
     else:
         return Response({'message':'there is something wrong'}, status=status.HTTP_400_BAD_REQUEST)
+'''
 
 
-
+@swagger_auto_schema(methods=['POST'], request_body=ProducerOrderSerializer)
 @api_view(['GET', 'POST'])
 def orders(request, format=None):
     """Creates new order with POST / Returns a list of orders with GET"""
     
     user = request.user
+    # producer = Producer.objects.get(pk=user.id)
     producer = User.objects.get(pk=user.id)
 
     if request.method == 'GET':
@@ -113,7 +125,15 @@ def orders(request, format=None):
         elif user.role == "3":
             serializer = ProducerOrderSerializer(data=request.data)
             if serializer.is_valid():
-                print(serializer.validated_data)
+
+                if serializer.validated_data['order_number']:
+                    params = serializer.validated_data['order_number']
+                    uploader_validator(params)
+                
+                if serializer.validated_data['proforma']:
+                    params = serializer.validated_data['proforma']
+                    uploader_validator(params)
+
                 serializer.validated_data['orderer'] = user
                 serializer.validated_data['producer'] = producer
                 serializer.save()
@@ -655,12 +675,10 @@ def order_completion_approval(request, order_pk, offer_pk, format=None):
 
 
 @api_view(['GET'])
-def vieW_all_producers(request, format=None):
+def view_all_producers(request, format=None):
     user = request.user
     if user.role != '0' :
+        #producers = Producer.objects.all()            # ALWAYS return [] queryset, because the Producer table has no data
         producers = User.objects.filter(role='3')
         serializer = ProducerSerializer(producers, many=True)
         return Response(serializer.data, status = status.HTTP_200_OK)
-    else:
-        return Response(status=status.HTTP_400_BAD_REQUEST)
-

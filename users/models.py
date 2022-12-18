@@ -7,7 +7,7 @@ from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 
-from users.senders import send_otp
+from utils.senders import send_otp
 
 from file_manager.models import Attachment
 
@@ -60,24 +60,25 @@ class User(AbstractBaseUser, PermissionsMixin):
     ]
 
     username = None
+    profile_picture_file = models.CharField(max_length=35)
     mobile = models.CharField(max_length=12, unique=True, blank=False, null=False)
-    password = models.CharField(max_length=255, null=True)
+    password = models.CharField(max_length=255, null=True, blank=True)
     type = models.CharField(choices=TYPE_CHOICES, max_length=1, default="0")                                        # حقیقی/ حقوقی
     role = models.CharField(choices=ROLE_CHOICES, max_length=1, default="0")                                        # نقش بازیگر(تریدر- تولیدکننده)
     company_name = models.CharField(max_length=50)                                                                  #نام شرکت
     company_origin = models.CharField(choices=NATIONALITY_CHOICES, max_length=50, default="0")                      #ملیت شرکت
-    company_id = models.CharField(max_length=10, blank=False, null=True)                                            #شماره ثبت
-    company_national_id = models.CharField(max_length=10, blank=False, null=True)                                   #شناسه ملی
-    company_phone = models.CharField(max_length=11, blank=False, null=True, unique=True)                            #شماره تماس شرکت
-    company_fax = models.CharField(max_length=11, blank=False, null=True)                                           #فکس
+    company_id = models.CharField(max_length=10)                                                                    #شماره ثبت
+    company_national_id = models.CharField(max_length=10)                                                           #شناسه ملی
+    company_phone = models.CharField(max_length=11, blank=True, null=True)     # DONT need to be unique             #شماره تماس شرکت
+    company_fax = models.CharField(max_length=11, blank=True, null=True)                                            #فکس
     url = models.CharField(max_length=255)                                                                          #نشانی اینترنتی
     company_address = models.TextField()                                                                            #آدرس شرکت
     ceo_name = models.CharField(max_length=50)                                                                      #نام مدیر عامل
     agent_name = models.CharField(max_length=50)                                                                    #نام نماینده
-    agent_phone = models.CharField(max_length=11, blank=False, null=True, unique=True)                              #شماره تماس نماینده
+    agent_phone = models.CharField(max_length=11, blank=True, null=True)       # DONT need to be unique             #شماره تماس نماینده
     agent_email = models.EmailField()                                                                               # ایمیل نماینده شرکت
-    license = models.ForeignKey(Attachment, related_name="license", on_delete=models.CASCADE, null=True)            #اساسنامه
-    company_doc = models.ForeignKey(Attachment, related_name="company_doc", on_delete=models.CASCADE, null=True)    #فایل ثبت شرکت
+    license_file = models.CharField(max_length=35)            #اساسنامه
+    company_doc_file = models.CharField(max_length=35)    #فایل ثبت شرکت
     
     about = models.TextField()                                                                                      #درباره شرکت
     email = models.EmailField()                                                                                     #ایمیل شرکت

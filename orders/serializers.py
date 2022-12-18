@@ -8,6 +8,7 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = '__all__'
+        #depth = 1
         read_only_fields = ['orderer', 'orderer_completion_date', 'freight_completion_date', 'ordering_date']
 
 
@@ -63,9 +64,9 @@ class OfferDetailSerializer(serializers.ModelSerializer):
 class ViewOrderNumberSerializer(serializers.ModelSerializer):
     class Meta:
         model = Offer
-        fields = ['order_number']
+        fields = ['order_number', 'order_number_file']
         depth = 1
-        read_only_fields = ['offer', 'order_number']
+        read_only_fields = ['offer', 'order_number', 'order_number_file']
 
 
 class OfferAcceptionSerializer(serializers.ModelSerializer):
@@ -290,7 +291,7 @@ class UploadOrderNumberSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Offer
-        fields = ['order_number']
+        fields = ['order_number', 'order_number_file']
 
 
 class CheckoutSerializer(serializers.ModelSerializer):

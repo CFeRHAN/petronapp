@@ -5,7 +5,7 @@ from file_manager.models import Attachment
 
 class Freight(User):
     """Model for Express"""
-    permission = models.ForeignKey(Attachment, related_name="attachment", on_delete=models.CASCADE, null=True)
+    permission_file = models.CharField(max_length=35, null=True)
 
     # vehicle_no = models.IntegerField() 
 

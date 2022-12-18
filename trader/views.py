@@ -15,11 +15,52 @@ from trader.models import Trader
 from orders.models import *
 from orders.serializers import *
 
+from utils.validator import uploader_validator
+
+@swagger_auto_schema(methods=['POST'], request_body=CreateTraderProfileSerializer)
+@api_view(['GET', 'POST'])
+def create_profile(request, pk, format = None):
+    """endpoint that allows user to create Trader profile"""
+
+    user = request.user
+    #trader = Trader.objects.create(pk=user.id)
+    trader = User.objects.get(pk=user.id)
+
+    if request.method == 'GET':
+        serializer = CreateTraderProfileSerializer(trader)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    elif request.method == 'POST':
+        if user.role == "0":
+            serializer = CreateTraderProfileSerializer(trader, data=request.data)
+            if serializer.is_valid():
+
+                if serializer.validated_data['license']:
+                    params = serializer.validated_data['license']
+                    uploader_validator(params)
+
+                if serializer.validated_data['company_doc']:
+                    params = serializer.validated_data['company_doc']
+                    uploader_validator(params)
+
+                serializer.validated_data['role'] = '1'
+                serializer.save()
+                password = user.mobile[8:]
+                trader.set_password(password)
+                trader.role = '1'
+                trader.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'message':'you already have a profile'}, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        return Response({'message':'there is something wrong'}, status=status.HTTP_400_BAD_REQUEST)
 
 
+'''
 @swagger_auto_schema(methods=['PUT'], request_body=CreateTraderProfileSerializer)
 @api_view(['GET', 'PUT'])
-def create_profile(request, pk, format = None):
+def create_profile2(request, pk, format = None):
     """endpoint that allows user to create Trader Profile"""
     
     user = request.user
@@ -30,27 +71,24 @@ def create_profile(request, pk, format = None):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     elif request.method == 'PUT':
+        serializer = CreateTraderProfileSerializer(trader, data=request.data)
         
-        if user.role == "0":
-            serializer = CreateTraderProfileSerializer(trader, data=request.data)
-            if serializer.is_valid():
-                serializer.validated_data['role'] = '1'
-                serializer.save()
-                password = user.mobile[8:]
-                trader.set_password(password)
-                trader.role = '1'
-                trader.save()
-                
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
+        if serializer.is_valid():
+            serializer.validated_data['role'] = '1'
+            serializer.save()
+            password = user.mobile[8:]
+            user.set_password(password)
+            user.role = '1'
+            # user.save()
+            
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-            else:
-                return Response(serializer.errors, status=status.HTTP_200_OK)
         else:
-            return Response({'message':'you already have a profile'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors, status=status.HTTP_200_OK)
             
     else:
         return Response({'message':'there is something wrong'}, status=status.HTTP_400_BAD_REQUEST)
-
+'''
 
 
 @swagger_auto_schema(methods=['POST'], request_body=OrderSerializer)
@@ -73,6 +111,19 @@ def orders(request, format=None):
         if user.role == "1":
             serializer = OrderSerializer(data=request.data)
             if serializer.is_valid():
+
+                if serializer.validated_data['profile_picture']:
+                    params = serializer.validated_data['profile_picture']
+                    uploader_validator(params)
+
+                if serializer.validated_data['order_number']:
+                    params = serializer.validated_data['order_number']
+                    uploader_validator(params)
+                
+                if serializer.validated_data['proforma']:
+                    params = serializer.validated_data['proforma']
+                    uploader_validator(params)
+
                 serializer.validated_data['orderer_id'] = user.id
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)

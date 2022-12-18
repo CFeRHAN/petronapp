@@ -17,45 +17,60 @@ from freight.serializers import *
 from orders.models import *
 from orders.serializers import *
 
-from file_manager.validator import file_validator, delete_file
+from utils.validator import uploader_validator
 
 
-@swagger_auto_schema(methods=['PUT'], request_body=CreateFreightProfileSerializer)
-@api_view(['GET', 'PUT'])
+@swagger_auto_schema(methods=['POST'], request_body=CreateFreightProfileSerializer)
+@api_view(['GET', 'POST'])
 def create_profile(request, pk, format = None):
-    """endpoint that allows user to create Freight Profile"""
-    
+    """endpoint that allows user to create Producer profile"""
+
     user = request.user
-    freight = User.objects.get(mobile=user.mobile)
+    # freight = Freight.objects.create(pk=user.id)
+    freight = User.objects.get(pk=user.id)
 
     if request.method == 'GET':
         serializer = CreateFreightProfileSerializer(freight)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    elif request.method == 'POST':
 
-    elif request.method == 'PUT':
-        
         if user.role == "0":
             serializer = CreateFreightProfileSerializer(freight, data=request.data)
             if serializer.is_valid():
+                
+                if serializer.validated_data['profile_picture']:
+                    params = serializer.validated_data['profile_picture']
+                    uploader_validator(params)
+
+                if serializer.validated_data['license']:
+                    params = serializer.validated_data['license']
+                    uploader_validator(params)
+
+                if serializer.validated_data['company_doc']:
+                    params = serializer.validated_data['company_doc']
+                    uploader_validator(params)
+                    
+                if serializer.validated_data['permission']:
+                    params = serializer.validated_data['permission']
+                    uploader_validator(params)
+                
+    
                 serializer.validated_data['role'] = '2'
                 serializer.save()
                 password = user.mobile[8:]
                 freight.set_password(password)
                 freight.role = '2'
                 freight.save()
-                
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-            else:
-                return Response(serializer.errors, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response({'message':'you already have a profile'}, status=status.HTTP_400_BAD_REQUEST)
-            
     else:
         return Response({'message':'there is something wrong'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-
+'''
 @api_view(['GET', 'PUT'])
 def create_profile2(request, pk, format = None):
     
@@ -85,7 +100,7 @@ def create_profile2(request, pk, format = None):
             
     else:
         return Response({'message':'there is something wrong'}, status=status.HTTP_400_BAD_REQUEST)
-
+'''
 
 @api_view(['GET'])
 def orders(request, format=None):
@@ -196,12 +211,12 @@ def create_offer(request, order_pk, format=None):
         return Response(status=status.HTTP_404_NOT_FOUND)
     
     if user.role == "0":
-        return Response({'message':'You are not Authorized for the system'},status=status.HTTP_401_UNAUTHORIZED)
+        return Response(status=status.HTTP_401_UNAUTHORIZED)
     
     elif user.role == "2":
-        serializer = CreateOfferSerializer(order, data=request.data)
+        serializer = CreateOfferSerializer(data=request.data)
         if serializer.is_valid():
-            freight = User.objects.get(id=user.id)
+            freight = Freight.objects.get(id=user.id)
             
             serializer.validated_data['freight'] = freight
             serializer.validated_data['order'] = order
