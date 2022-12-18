@@ -5,7 +5,6 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from trader.models import Trader
 from freight.models import Freight
 from producer.models import Producer
-from file_manager.models import Attachment
 from users.models import User
 
 
@@ -28,7 +27,7 @@ class Payment(models.Model):
 class PaperWork(models.Model):
     """model for covering all paper works"""
     
-    bill_id = models.ForeignKey(Attachment, on_delete=models.DO_NOTHING)
+    bill_id = models.CharField(max_length=35)
     upload_date = models.DateField(null=False, blank=False)
     status = models.BooleanField(default=False)
     rejection_reasons = models.TextField(blank=True)
@@ -97,8 +96,9 @@ class Offer(models.Model):
     drivers_info = models.ForeignKey(PaperWork, on_delete=models.DO_NOTHING, related_name='drivers_info', null=True, blank=True)
     bijak = models.ForeignKey(PaperWork, on_delete=models.DO_NOTHING, related_name='bijak', null=True, blank=True)
     invoice_packing = models.ForeignKey(PaperWork, on_delete=models.DO_NOTHING, related_name='invoice_packing', null=True, blank=True)
-    order_number_file = models.ForeignKey(PaperWork, on_delete=models.DO_NOTHING, related_name='order_number', null=True, blank=True)
     order_number = models.CharField(max_length=35, null=True, blank=True)
+    order_number_file = models.ForeignKey(PaperWork, on_delete=models.DO_NOTHING, related_name='order_number', null=True, blank=True)
+    
     deal_draft = models.ForeignKey(PaperWork, on_delete=models.DO_NOTHING, related_name='prescript', null=True, blank=True)
     load_info = models.ForeignKey(PaperWork, on_delete=models.DO_NOTHING, related_name='load_info', null=True, blank=True)
 
