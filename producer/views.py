@@ -1,3 +1,6 @@
+import random
+import string
+
 from django.utils import timezone
 
 from drf_yasg.utils import swagger_auto_schema
@@ -50,10 +53,21 @@ def create_profile(request, pk, format = None):
 
                 serializer.validated_data['role'] = '3'
                 serializer.save()
-                password = user.mobile[8:]
-                producer.set_password(password)
-                producer.role = '3'
-                producer.save()
+
+                if 'password' not in serializer.validated_data:
+                    
+                    rand = random.SystemRandom()
+                    digits = rand.choices(string.digits, k=6)
+                    password =  ''.join(digits)
+                    producer.set_password(password)
+                    producer.role = '2'
+                    producer.save()
+                else:
+                    password = serializer.validated_data['password']
+                    producer.set_password(password)
+                    producer.role = '2'
+                    producer.save()
+
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
@@ -63,41 +77,6 @@ def create_profile(request, pk, format = None):
         return Response({'message':'there is something wrong'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-'''
-@api_view(['GET', 'PUT'])
-def create_profile2(request, pk, format = None):
-    """endpoint that allows user to create a Producer profile"""
-    
-    user = request.user
-    producer = User.objects.get(mobile=user.mobile)
-    
-
-    if request.method == 'GET':
-        serializer = CreateProducerProfileSerializer(producer)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    elif request.method == 'PUT':
-        producer = Producer.objects.update(mobile=user.mobile)
-        serializer = CreateProducerProfileSerializer(producer, data=request.data)
-        
-        if serializer.is_valid():
-            serializer.validated_data['role'] = '3'
-            serializer.save()
-
-            password = user.mobile[8:]
-            user.set_password(password)
-            user.role = '3'
-            user.save()
-            
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-        else:
-            return Response(serializer.errors, status=status.HTTP_200_OK)
-            
-    else:
-        return Response({'message':'there is something wrong'}, status=status.HTTP_400_BAD_REQUEST)
-'''
-
 
 @swagger_auto_schema(methods=['POST'], request_body=ProducerOrderSerializer)
 @api_view(['GET', 'POST'])
@@ -105,7 +84,6 @@ def orders(request, format=None):
     """Creates new order with POST / Returns a list of orders with GET"""
     
     user = request.user
-    # producer = Producer.objects.get(pk=user.id)
     producer = User.objects.get(pk=user.id)
 
     if request.method == 'GET':
@@ -124,7 +102,7 @@ def orders(request, format=None):
         if user.role == "0":
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         elif user.role == "3":
-            serializer = ProducerOrderSerializer(data=request.data)
+            serializer = ProducerCreateOrderSerializer(data=request.data)
             if serializer.is_valid():
 
                 if serializer.validated_data['order_number']:

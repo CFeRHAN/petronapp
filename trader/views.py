@@ -1,3 +1,6 @@
+import random
+import string
+
 from django.utils import timezone
 
 from drf_yasg.utils import swagger_auto_schema
@@ -49,50 +52,26 @@ def create_profile(request, pk, format = None):
 
                 serializer.validated_data['role'] = '1'
                 serializer.save()
-                password = user.mobile[8:]
-                trader.set_password(password)
-                trader.role = '1'
-                trader.save()
+                if 'password' not in serializer.validated_data:
+                    
+                    rand = random.SystemRandom()
+                    digits = rand.choices(string.digits, k=6)
+                    password =  ''.join(digits)
+                    trader.set_password(password)
+                    trader.role = '2'
+                    trader.save()
+                else:
+                    password = serializer.validated_data['password']
+                    trader.set_password(password)
+                    trader.role = '2'
+                    trader.save()
+
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response({'message':'you already have a profile'}, status=status.HTTP_400_BAD_REQUEST)
     else:
         return Response({'message':'there is something wrong'}, status=status.HTTP_400_BAD_REQUEST)
-
-
-'''
-@swagger_auto_schema(methods=['PUT'], request_body=CreateTraderProfileSerializer)
-@api_view(['GET', 'PUT'])
-def create_profile2(request, pk, format = None):
-    """endpoint that allows user to create Trader Profile"""
-    
-    user = request.user
-    trader = User.objects.get(mobile=user.mobile)
-
-    if request.method == 'GET':
-        serializer = CreateTraderProfileSerializer(trader)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    elif request.method == 'PUT':
-        serializer = CreateTraderProfileSerializer(trader, data=request.data)
-        
-        if serializer.is_valid():
-            serializer.validated_data['role'] = '1'
-            serializer.save()
-            password = user.mobile[8:]
-            user.set_password(password)
-            user.role = '1'
-            # user.save()
-            
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-        else:
-            return Response(serializer.errors, status=status.HTTP_200_OK)
-            
-    else:
-        return Response({'message':'there is something wrong'}, status=status.HTTP_400_BAD_REQUEST)
-'''
 
 
 @swagger_auto_schema(methods=['POST'], request_body=OrderSerializer)
@@ -113,7 +92,7 @@ def orders(request, format=None):
             return Response(status=status.HTTP_400_BAD_REQUEST)
     elif request.method == 'POST':
         if user.role == "1":
-            serializer = OrderSerializer(data=request.data)
+            serializer = CreateOrderSerializer(data=request.data)
             if serializer.is_valid():
 
                 if serializer.validated_data['profile_picture']:

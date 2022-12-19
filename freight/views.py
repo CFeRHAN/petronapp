@@ -1,4 +1,6 @@
-import requests
+import random
+import string
+
 from django.utils import timezone
 
 from drf_yasg.utils import swagger_auto_schema
@@ -26,7 +28,6 @@ def create_profile(request, pk, format = None):
     """endpoint that allows user to create Producer profile"""
 
     user = request.user
-    # freight = Freight.objects.create(pk=user.id)
     freight = User.objects.get(pk=user.id)
 
     if request.method == 'GET':
@@ -58,10 +59,20 @@ def create_profile(request, pk, format = None):
     
                 serializer.validated_data['role'] = '2'
                 serializer.save()
-                password = user.mobile[8:]
-                freight.set_password(password)
-                freight.role = '2'
-                freight.save()
+                if 'password' not in serializer.validated_data:
+                    
+                    rand = random.SystemRandom()
+                    digits = rand.choices(string.digits, k=6)
+                    password =  ''.join(digits)
+                    freight.set_password(password)
+                    freight.role = '2'
+                    freight.save()
+                else:
+                    password = serializer.validated_data['password']
+                    freight.set_password(password)
+                    freight.role = '2'
+                    freight.save()
+
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
