@@ -16,6 +16,7 @@ from .serializers import *
 from users.models import OTP
 
 
+
 class OTPView(APIView):
     def get(self, request):
         serializer = RequestOTPSerializer(data=request.query_params)
@@ -30,6 +31,9 @@ class OTPView(APIView):
 
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST, data=serializer.errors)
+
+
+    @swagger_auto_schema(request_body=VerifyOtpRequestSerializer)
     def post(self, request):
         serializer = VerifyOtpRequestSerializer(data=request.data)
         if serializer.is_valid():
