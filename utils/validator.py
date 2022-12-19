@@ -4,6 +4,10 @@ from rest_framework.response import Response
 from django.conf import settings
 
 
+def key_existance(list, key):
+    return key in list and list[key]
+
+
 def uploader_validator(params):
     URL = settings.UPLOADER_URL
     req = requests.get(url = URL + params + '/')

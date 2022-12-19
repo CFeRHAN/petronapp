@@ -18,7 +18,8 @@ from producer.models import Producer
 from orders.models import *
 from orders.serializers import *
 
-from utils.validator import uploader_validator
+from utils.validator import uploader_validator, key_existance
+from utils.senders import send_password
 
 
 @swagger_auto_schema(methods=['POST'], request_body=CreateProducerProfileSerializer)
@@ -38,17 +39,21 @@ def create_profile(request, pk, format = None):
             serializer = CreateProducerProfileSerializer(producer, data=request.data)
             if serializer.is_valid():
 
-                if 'profile_picture_file' in serializer.validated_data and serializer.validated_data['profile_picture_file']:
-                    params = serializer.validated_data['profile_picture_file']
-                    uploader_validator(params)
+                if key_existance(serializer.validated_data, 'profile_picture_file'):
+                    if not serializer.validated_data['profile_picture_file'] == '-':
+                        params = serializer.validated_data['profile_picture_file']
+                        uploader_validator(params)
+                    
 
-                if 'license_file' in serializer.validated_data and serializer.validated_data['license_file']:
-                    params = serializer.validated_data['license_file']
-                    uploader_validator(params)
-
-                if 'company_doc_file' in serializer.validated_data and serializer.validated_data['company_doc_file']:
-                    params = serializer.validated_data['company_doc_file']
-                    uploader_validator(params)
+                if key_existance(serializer.validated_data, 'license_file'):
+                    if not serializer.validated_data['license_file'] == '-':
+                        params = serializer.validated_data['license_file']
+                        uploader_validator(params)                
+                
+                if key_existance(serializer.validated_data, 'company_doc_file'):
+                    if not serializer.validated_data['company_doc_file'] == '-':
+                        params = serializer.validated_data['company_doc_file']
+                        uploader_validator(params)
                     
 
                 serializer.validated_data['role'] = '3'
@@ -59,14 +64,16 @@ def create_profile(request, pk, format = None):
                     rand = random.SystemRandom()
                     digits = rand.choices(string.digits, k=6)
                     password =  ''.join(digits)
-                    producer.set_password(password)
-                    producer.role = '2'
-                    producer.save()
+                    
                 else:
                     password = serializer.validated_data['password']
-                    producer.set_password(password)
-                    producer.role = '2'
-                    producer.save()
+                    
+                    
+                producer.set_password(password)  
+                producer.role = '3'
+                data = {'password': password, 'recipient':user.mobile}
+                send_password(data)
+                producer.save()
 
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

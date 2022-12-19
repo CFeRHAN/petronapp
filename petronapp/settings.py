@@ -154,6 +154,7 @@ REST_FRAMEWORK = {
 # Const URLs
 
 SMSSERVER = 'http://45.139.10.161:8092/sms/otp/'
+PASSWORD_SMSSERVER = 'http://45.139.10.161:8092/sms/'
 UPLOADER_URL = 'http://45.139.10.161:8091/uploader/'
 
 # # Django JWT Settings

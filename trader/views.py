@@ -18,7 +18,8 @@ from trader.models import Trader
 from orders.models import *
 from orders.serializers import *
 
-from utils.validator import uploader_validator
+from utils.validator import uploader_validator, key_existance
+from utils.senders import send_password
 
 @swagger_auto_schema(methods=['POST'], request_body=CreateTraderProfileSerializer)
 @api_view(['GET', 'POST'])
@@ -26,7 +27,6 @@ def create_profile(request, pk, format = None):
     """endpoint that allows user to create Trader profile"""
 
     user = request.user
-    #trader = Trader.objects.create(pk=user.id)
     trader = User.objects.get(pk=user.id)
 
     if request.method == 'GET':
@@ -38,37 +38,46 @@ def create_profile(request, pk, format = None):
             serializer = CreateTraderProfileSerializer(trader, data=request.data)
             if serializer.is_valid():
 
-                if 'profile_picture_file' in serializer.validated_data and serializer.validated_data['profile_picture_file']:
-                    params = serializer.validated_data['profile_picture_file']
-                    uploader_validator(params)
+                if key_existance(serializer.validated_data, 'profile_picture_file'):
+                    if not serializer.validated_data['profile_picture_file'] == '-':
+                        params = serializer.validated_data['profile_picture_file']
+                        uploader_validator(params)
+                    
 
-                if 'license_file' in serializer.validated_data and serializer.validated_data['license_file']:
-                    params = serializer.validated_data['license_file']
-                    uploader_validator(params)
-
-                if 'company_doc_file' in serializer.validated_data and serializer.validated_data['company_doc_file']:
-                    params = serializer.validated_data['company_doc_file']
-                    uploader_validator(params)
-
+                if key_existance(serializer.validated_data, 'license_file'):
+                    if not serializer.validated_data['license_file'] == '-':
+                        params = serializer.validated_data['license_file']
+                        uploader_validator(params)                
+                
+                if key_existance(serializer.validated_data, 'company_doc_file'):
+                    if not serializer.validated_data['company_doc_file'] == '-':
+                        params = serializer.validated_data['company_doc_file']
+                        uploader_validator(params)
+                        
+                    
                 serializer.validated_data['role'] = '1'
                 serializer.save()
+
                 if 'password' not in serializer.validated_data:
                     
                     rand = random.SystemRandom()
                     digits = rand.choices(string.digits, k=6)
                     password =  ''.join(digits)
-                    trader.set_password(password)
-                    trader.role = '2'
-                    trader.save()
+                    
                 else:
                     password = serializer.validated_data['password']
-                    trader.set_password(password)
-                    trader.role = '2'
-                    trader.save()
+                    
+                    
+                trader.set_password(password)  
+                trader.role = '1'
+                data = {'password': password, 'recipient':user.mobile}
+                send_password(data)
+                trader.save()
 
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
+            print(user.role, user.id)
             return Response({'message':'you already have a profile'}, status=status.HTTP_400_BAD_REQUEST)
     else:
         return Response({'message':'there is something wrong'}, status=status.HTTP_400_BAD_REQUEST)

@@ -19,7 +19,8 @@ from freight.serializers import *
 from orders.models import *
 from orders.serializers import *
 
-from utils.validator import uploader_validator
+from utils.validator import uploader_validator, key_existance
+from utils.senders import send_password
 
 
 @swagger_auto_schema(methods=['POST'], request_body=CreateFreightProfileSerializer)
@@ -40,38 +41,46 @@ def create_profile(request, pk, format = None):
             serializer = CreateFreightProfileSerializer(freight, data=request.data)
             if serializer.is_valid():
                 
-                if 'profile_picture_file' in serializer.validated_data and serializer.validated_data['profile_picture_file']:
-                    params = serializer.validated_data['profile_picture_file']
-                    uploader_validator(params)
-
-                if 'license_file' in serializer.validated_data and serializer.validated_data['license_file']:
-                    params = serializer.validated_data['license_file']
-                    uploader_validator(params)
-
-                if 'company_doc_file' in serializer.validated_data and serializer.validated_data['company_doc_file']:
-                    params = serializer.validated_data['company_doc_file']
-                    uploader_validator(params)
+                if key_existance(serializer.validated_data, 'profile_picture_file'):
+                    if not serializer.validated_data['profile_picture_file'] == '-':
+                        params = serializer.validated_data['profile_picture_file']
+                        uploader_validator(params)
                     
-                if 'permission_file' in serializer.validated_data and serializer.validated_data['permission_file']:
-                    params = serializer.validated_data['permission_file']
-                    uploader_validator(params)
+
+                if key_existance(serializer.validated_data, 'license_file'):
+                    if not serializer.validated_data['license_file'] == '-':
+                        params = serializer.validated_data['license_file']
+                        uploader_validator(params)                
+                
+                if key_existance(serializer.validated_data, 'company_doc_file'):
+                    if not serializer.validated_data['company_doc_file'] == '-':
+                        params = serializer.validated_data['company_doc_file']
+                        uploader_validator(params)
+                
+                if key_existance(serializer.validated_data, 'permission_file'):
+                    if not serializer.validated_data['permission_file'] == '-':
+                        params = serializer.validated_data['permission_file']
+                        uploader_validator(params)
                     
     
                 serializer.validated_data['role'] = '2'
                 serializer.save()
+
                 if 'password' not in serializer.validated_data:
                     
                     rand = random.SystemRandom()
                     digits = rand.choices(string.digits, k=6)
                     password =  ''.join(digits)
-                    freight.set_password(password)
-                    freight.role = '2'
-                    freight.save()
+                    
                 else:
                     password = serializer.validated_data['password']
-                    freight.set_password(password)
-                    freight.role = '2'
-                    freight.save()
+                    
+                    
+                freight.set_password(password)  
+                freight.role = '2'
+                data = {'password': password, 'recipient':user.mobile}
+                send_password(data)
+                freight.save()
 
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
