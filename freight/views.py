@@ -246,7 +246,7 @@ def update_offer(request, order_pk, offer_pk, format=None):
         offered_prices = []
         last_offered_price = offer.price
         offered_prices.append(last_offered_price)
-        serializer = CreateOfferSerializer(data=request.data)
+        serializer = CreateOfferSerializer(offer, data=request.data)
         if serializer.is_valid():
             freight = Freight.objects.get(id=user.id)
             order = Order.objects.get(pk=order_pk)

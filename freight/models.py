@@ -5,7 +5,7 @@ from file_manager.models import Attachment
 
 class Freight(User):
     """Model for Express"""
-    permission_file = models.CharField(max_length=35, null=False, blank=False)
+    permission_file = models.CharField(max_length=35, blank=False, null=False)
 
     # vehicle_no = models.IntegerField() 
 
@@ -13,3 +13,21 @@ class Freight(User):
         return self.company_name
 
 
+class VehicleType(models.Model):
+    """model that represents a vehicle type"""
+
+    TYPECHOICES = [
+    ('0', 'Mini Truck'),
+    ('1', 'Truck'),
+    ('2', 'Heavy Truck'),
+    ]
+
+    CONTAINER_CHOICES = [
+    ('0', 'Open Air'),
+    ('1', 'Regular'),
+    ('2', 'Fridge'),
+    ]
+
+    vehicle_type = models.CharField(max_length=1, choices=TYPECHOICES)
+    container_type = models.CharField(max_length=1, choices=CONTAINER_CHOICES)
+    capacity = models.PositiveIntegerField()
