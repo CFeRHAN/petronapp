@@ -62,7 +62,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     username = None
     profile_picture_file = models.CharField(max_length=35, null=True, blank=True)
     mobile = models.CharField(max_length=12, unique=True, blank=False, null=False)
-    password = models.CharField(max_length=255, blank=False, null=False)
+    password = models.CharField(max_length=255, blank=True, null=False)
     type = models.CharField(choices=TYPE_CHOICES, max_length=1, default="0", blank=False, null=False)                                        # حقیقی/ حقوقی
     role = models.CharField(choices=ROLE_CHOICES, max_length=1, default="0", blank=False, null=False)                                        # نقش بازیگر(تریدر- تولیدکننده)
     company_name = models.CharField(max_length=50, blank=False, null=False)                                                                  #نام شرکت

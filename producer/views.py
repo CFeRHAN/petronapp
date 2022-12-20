@@ -112,13 +112,16 @@ def orders(request, format=None):
             serializer = ProducerCreateOrderSerializer(data=request.data)
             if serializer.is_valid():
 
-                if serializer.validated_data['order_number']:
-                    params = serializer.validated_data['order_number']
-                    uploader_validator(params)
-                
-                if serializer.validated_data['proforma']:
-                    params = serializer.validated_data['proforma']
-                    uploader_validator(params)
+                if key_existance(serializer.validated_data, 'order_number_file'):
+                    if not serializer.validated_data['order_number_file'] == '-':
+                        params = serializer.validated_data['order_number_file']
+                        uploader_validator(params)
+
+                if key_existance(serializer.validated_data, 'proforma_file'):
+                    if not serializer.validated_data['proforma_file'] == '-':
+                        params = serializer.validated_data['proforma_file']
+                        uploader_validator(params)
+
 
                 serializer.validated_data['orderer'] = user
                 serializer.validated_data['producer'] = producer

@@ -39,7 +39,7 @@ def send_otp(otp):
     return Response(data, status=status.HTTP_200_OK)
     
 def send_password(data):
-    message = f'کاربر گرامی پروفایل شما در سامانه پترونپ با موفقیت ذخیره شد./n رمز عبور شما:{data["password"]}'
+    message = f'کاربر گرامی پروفایل شما در سامانه پترونپ با موفقیت ذخیره شد. رمز عبور شما:{data["password"]}'
 
 
     url = settings.PASSWORD_SMSSERVER

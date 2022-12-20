@@ -70,7 +70,7 @@ def create_profile(request, pk, format = None):
                     
                 trader.set_password(password)  
                 trader.role = '1'
-                data = {'password': password, 'recipient':user.mobile}
+                data = {'password':password, 'recipient':user.mobile}
                 send_password(data)
                 trader.save()
 
@@ -104,17 +104,17 @@ def orders(request, format=None):
             serializer = CreateOrderSerializer(data=request.data)
             if serializer.is_valid():
 
-                if serializer.validated_data['profile_picture']:
-                    params = serializer.validated_data['profile_picture']
-                    uploader_validator(params)
 
-                if serializer.validated_data['order_number']:
-                    params = serializer.validated_data['order_number']
-                    uploader_validator(params)
-                
-                if serializer.validated_data['proforma']:
-                    params = serializer.validated_data['proforma']
-                    uploader_validator(params)
+                if key_existance(serializer.validated_data, 'order_number_file'):
+                    if not serializer.validated_data['order_number_file'] == '-':
+                        params = serializer.validated_data['order_number_file']
+                        uploader_validator(params)
+
+                if key_existance(serializer.validated_data, 'proforma_file'):
+                    if not serializer.validated_data['proforma_file'] == '-':
+                        params = serializer.validated_data['proforma_file']
+                        uploader_validator(params)
+
 
                 serializer.validated_data['orderer_id'] = user.id
                 serializer.save()
