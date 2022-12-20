@@ -46,19 +46,19 @@ class Order(models.Model):
 
     orderer = models.ForeignKey(User, on_delete=models.CASCADE, related_name="orderer")
     producer = models.ForeignKey(User, on_delete=models.CASCADE, related_name="petro_seller_co")        # Producer !!!
-    contract_type = models.CharField(max_length=1, choices=TYPE_CHOICES, null=False, blank=False)
-    ordering_date = models.DateTimeField(auto_now_add=True, blank=False)
-    order_number = models.CharField(max_length=35, null=True, blank=True)
-    order_number_file = models.CharField(max_length=35, null=True, blank=True)
-    product = models.CharField(max_length=200, blank=False)
-    weight = models.FloatField(blank=False)
-    vehicle_type = models.CharField(max_length=200, blank=False)
-    loading_location = models.CharField(max_length=200, blank=False)
-    destination = models.CharField(max_length=200, blank=False)
-    second_destination = models.CharField(max_length=200, null=True, blank=True)
-    loading_date = models.DateTimeField(auto_now_add=False, blank=False)
-    border_passage = models.CharField(max_length=100, null=True, blank=True)
-    description = models.TextField(null=True, blank=True)
+    contract_type = models.CharField(max_length=1, choices=TYPE_CHOICES, blank=False, null=False)
+    ordering_date = models.DateTimeField(auto_now_add=True, blank=False, null=False)
+    order_number = models.CharField(max_length=35, Blank=True, null=True)
+    order_number_file = models.CharField(max_length=35, blank=True, null=True)
+    product = models.CharField(max_length=200, blank=False, null=False)
+    weight = models.FloatField(blank=False, null=False)
+    vehicle_type = models.CharField(max_length=200, blank=False, null=False)
+    loading_location = models.CharField(max_length=200, blank=False, null=False)
+    destination = models.CharField(max_length=200, blank=False, null=False)
+    second_destination = models.CharField(max_length=200, blank=True, null=True)
+    loading_date = models.DateTimeField(auto_now_add=False, blank=False, null=False)
+    border_passage = models.CharField(max_length=100, blank=True, null=True)
+    description = models.TextField(null=True, blank=True, null=True)
     proforma_file = models.CharField(max_length=35)
     orderer_completion_date = models.DateTimeField(null=True, blank=True)  # change this to datetime field
     freight_completion_date = models.DateTimeField(null=True, blank=True)  # change this to datetime field
@@ -79,8 +79,8 @@ class Offer(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     freight = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     price = models.FloatField(blank=False, null=False)
-    orderer_acception = models.BooleanField(default=False)
-    freight_acception = models.BooleanField(default=False)
+    orderer_acception = models.BooleanField(default=False, blank=False, null=False)
+    freight_acception = models.BooleanField(default=False, blank=False, null=False)
     prepayment_percentage = models.PositiveIntegerField(blank=True, null=True, validators=[MaxValueValidator(100), MinValueValidator(0)])
     
     # PAYMENT
