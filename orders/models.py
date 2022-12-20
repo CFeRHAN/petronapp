@@ -48,7 +48,7 @@ class Order(models.Model):
     producer = models.ForeignKey(User, on_delete=models.CASCADE, related_name="petro_seller_co")        # Producer !!!
     contract_type = models.CharField(max_length=1, choices=TYPE_CHOICES, blank=False, null=False)
     ordering_date = models.DateTimeField(auto_now_add=True, blank=False, null=False)
-    order_number = models.CharField(max_length=35, Blank=True, null=True)
+    order_number = models.CharField(max_length=35, blank=True, null=True)
     order_number_file = models.CharField(max_length=35, blank=True, null=True)
     product = models.CharField(max_length=200, blank=False, null=False)
     weight = models.FloatField(blank=False, null=False)
@@ -58,7 +58,7 @@ class Order(models.Model):
     second_destination = models.CharField(max_length=200, blank=True, null=True)
     loading_date = models.DateTimeField(auto_now_add=False, blank=False, null=False)
     border_passage = models.CharField(max_length=100, blank=True, null=True)
-    description = models.TextField(null=True, blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
     proforma_file = models.CharField(max_length=35)
     orderer_completion_date = models.DateTimeField(null=True, blank=True)  # change this to datetime field
     freight_completion_date = models.DateTimeField(null=True, blank=True)  # change this to datetime field
