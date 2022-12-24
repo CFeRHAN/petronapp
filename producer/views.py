@@ -218,6 +218,7 @@ def offer_detail(request,order_pk, offer_pk, format=None):
         return Response(status=status.HTTP_400_BAD_REQUEST)
         
 
+@swagger_auto_schema(methods=['PUT'], request_body=OfferAcceptionSerializer)
 @api_view(['PUT'])
 def offer_acception(request, order_pk, offer_pk, format=None):
     """endpoint that allows producer to accept an offer"""
@@ -266,6 +267,7 @@ def approved_orders(request, format=None):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
+@swagger_auto_schema(methods=['PUT'], request_body=UploadOrderNumberSerializer)
 @api_view(['PUT'])
 def upload_order_number(request, order_pk, offer_pk, format=None):
     """endpoint that allows Producer to upload the Order Number"""
@@ -312,6 +314,7 @@ def view_drivers_info(request, order_pk, offer_pk, format=None):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
+@swagger_auto_schema(methods=['PUT'], request_body=UploadInventoryBillSerializer)
 @api_view(['PUT'])
 def upload_invetory_bill(request, order_pk, offer_pk, format=None):
     """endpoint that allows Producer to view drivers info"""
@@ -360,6 +363,7 @@ def view_demurrage_bill(request, order_pk, offer_pk, format =None):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
+@swagger_auto_schema(methods=['PUT'], request_body=UploadPaymentBillSerializer)
 @api_view(['PUT'])
 def upload_prepayment_bill(request, order_pk, offer_pk):
     """endpoint that allows producer to view the prepayment confirmation receipt"""
@@ -386,6 +390,8 @@ def upload_prepayment_bill(request, order_pk, offer_pk):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
+
+@swagger_auto_schema(methods=['PUT'], request_body=ConfirmPrepaymentRecieptSerializer)
 @api_view(['PUT'])
 def confirm_prepayment_receipt(request, order_pk, offer_pk, format=None):
     """endpoint that allows producer to view and confirm the approval of the paid Pre-Payment"""
@@ -415,6 +421,7 @@ def confirm_prepayment_receipt(request, order_pk, offer_pk, format=None):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
+@swagger_auto_schema(methods=['PUT'], request_body=UploadLoadInfoBillSerializer)
 @api_view(['PUT'])
 def upload_load_information(request, order_pk, offer_pk, format=None):
     """endpoint that allows producer to upload the load information file"""
@@ -470,6 +477,7 @@ def upload_invoice_packing_bill(request, order_pk, offer_pk, format=None):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
+@swagger_auto_schema(methods=['PUT'], request_body=ConfirmLadingBillSerializer)
 @api_view(['PUT'])
 def confirm_lading_bill(request, order_pk, offer_pk, format=None):
     """endpoint that allows Producer to confirm lading bill"""
@@ -499,6 +507,7 @@ def confirm_lading_bill(request, order_pk, offer_pk, format=None):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
+@swagger_auto_schema(methods=['PUT'], request_body=ConfirmInventoryReceiptSerializer)
 @api_view(['PUT'])
 def confrim_inventory_reciept(request, order_pk, offer_pk, format=None):
     """endpoint that allows producer to confirm a paid inventory receipt"""
@@ -529,6 +538,7 @@ def confrim_inventory_reciept(request, order_pk, offer_pk, format=None):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
+@swagger_auto_schema(methods=['PUT'], request_body=UploadDemurrageReceiptSerializer)
 @api_view(['PUT'])
 def upload_demurrage_receipt(request, order_pk, offer_pk, format=None):
     """endpoint that allows Producer to upload a demurrage receipt"""
@@ -584,6 +594,7 @@ def upload_bijak(request, order_pk, offer_pk, format=None):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
+@swagger_auto_schema(methods=['PUT'], request_body=DefineSecondDestinationSerializer)
 @api_view(['PUT'])
 def define_second_destination(request, order_pk, offer_pk, format=None):
     """endpoint that allows Producer to define a second destination for an order"""
@@ -608,6 +619,7 @@ def define_second_destination(request, order_pk, offer_pk, format=None):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
+@swagger_auto_schema(methods=['PUT'], request_body=ConfirmSecondDestinationBillSerializer)
 @api_view(['PUT'])
 def confirm_second_destination_bill(request, order_pk, offer_pk, format=None):
     """endpoint that allows Producer to confrim the bill for Second Destination"""
@@ -637,6 +649,7 @@ def confirm_second_destination_bill(request, order_pk, offer_pk, format=None):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
+@swagger_auto_schema(methods=['PUT'], request_body=OrderCompletionAprroveserializer)
 @api_view(['PUT'])
 def order_completion_approval(request, order_pk, offer_pk, format=None):
     """endpoint that allows Producer company to approve that an order cycle is finished"""    

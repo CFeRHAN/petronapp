@@ -170,6 +170,7 @@ def order_detail(request, order_pk, format=None):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
+
 @api_view(['GET'])
 def offers(request, order_pk, format=None):
     """endpoint that retrieves received offers for an order"""
@@ -188,6 +189,7 @@ def offers(request, order_pk, format=None):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
+@swagger_auto_schema(methods=['PUT'], request_body=OfferSerializer)
 @api_view(['GET', 'PUT'])
 def offer_detail(request, offer_pk):
 
@@ -209,6 +211,7 @@ def offer_detail(request, offer_pk):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
+@swagger_auto_schema(methods=['PUT'], request_body=OfferSelectionSerializer)
 @api_view(['PUT'])
 def offer_acception(request, order_pk, offer_pk, format=None):
     """endpoint that allows Trader to select an offer for the giver order"""
@@ -259,6 +262,7 @@ def view_deal_draft(request, order_pk, offer_pk, format=None):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
+@swagger_auto_schema(methods=['PUT'], request_body=ViewOrderNumberSerializer)
 @api_view(['PUT'])
 def send_order_number(request, order_pk, offer_pk):
     """endpoints that allows Trader to send the order number to Freight"""
@@ -370,6 +374,7 @@ def confirm_prepayment_receipt(request, order_pk, offer_pk, format=None):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
+@swagger_auto_schema(methods=['PUT'], request_body=ConfirmLadingBillSerializer)
 @api_view(['PUT'])
 def confirm_lading_bill(request, order_pk, offer_pk, format=None):
     """endpoint that allows Trader to view the Lading bill for an order"""
@@ -515,6 +520,7 @@ def upload_demurrage_receipt(request, order_pk, offer_pk, format=None):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
+@swagger_auto_schema(methods=['PUT'], request_body=OrderCompletionAprroveserializer)
 @api_view(['PUT'])
 def order_completion_approval(request, order_pk, offer_pk, format=None):
     """endpoint that allows Trader company to approve that an order cycle is finished"""    

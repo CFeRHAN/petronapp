@@ -89,37 +89,6 @@ def create_profile(request, pk, format = None):
     else:
         return Response({'message':'there is something wrong'}, status=status.HTTP_400_BAD_REQUEST)
 
-'''
-@api_view(['GET', 'PUT'])
-def create_profile2(request, pk, format = None):
-    
-    user = request.user
-    freight = User.objects.get(mobile=user.mobile)
-
-    if request.method == 'GET':
-        serializer = CreateFreightProfileSerializer(freight)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    elif request.method == 'PUT':
-        serializer = CreateFreightProfileSerializer(freight, data=request.data)
-        
-        if serializer.is_valid():
-            serializer.validated_data['role'] = '2'
-            serializer.save()
-
-            password = user.mobile[8:]
-            user.set_password(password)
-            user.role = '2'
-            user.save()
-            
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-        else:
-            return Response(serializer.errors, status=status.HTTP_200_OK)
-            
-    else:
-        return Response({'message':'there is something wrong'}, status=status.HTTP_400_BAD_REQUEST)
-'''
 
 @api_view(['GET'])
 def orders(request, format=None):
@@ -300,6 +269,7 @@ def offer_wait_list(request, format=None):
 
 
 
+@swagger_auto_schema(methods=['PUT'], request_body=OfferSerializer)
 @api_view(['PUT'])
 def offer_confirmation(request, order_pk, offer_pk, format=None):
     """endpoint that allows a Freight company to confirm an already given offer"""
