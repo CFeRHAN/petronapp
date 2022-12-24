@@ -204,13 +204,15 @@ def create_offer(request, order_pk, format=None):
     
     elif user.role == "2":
         serializer = CreateOfferSerializer(data=request.data)
+
         if serializer.is_valid():
             freight = User.objects.get(id=user.id)
             
             serializer.validated_data['freight'] = freight
             serializer.validated_data['order'] = order
-            deal_draft = create_paperwork(serializer.validated_data['deal_draft'])
-            serializer.validated_data['deal_draft'] = deal_draft
+            deal_draft = create_paperwork(serializer.validated_data['deal_draft_file'])
+            print(deal_draft.id)
+            serializer.validated_data['deal_draft'] = deal_draft.id
             serializer.save()
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -240,7 +242,7 @@ def update_offer(request, order_pk, offer_pk, format=None):
         offered_prices.append(last_offered_price)
         serializer = CreateOfferSerializer(offer, data=request.data)
         if serializer.is_valid():
-            freight = Freight.objects.get(id=user.id)
+            freight = User.objects.get(id=user.id)
             order = Order.objects.get(pk=order_pk)
             
             serializer.validated_data['freight'] = freight

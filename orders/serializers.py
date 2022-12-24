@@ -35,9 +35,10 @@ class ProducerCreateOrderSerializer(serializers.ModelSerializer):
 
 
 class CreateOfferSerializer(serializers.ModelSerializer):
+    deal_draft_file = serializers.CharField(max_length=35)
     class Meta:
         model = Offer
-        fields = ['price', 'deal_draft', 'prepayment_percentage']
+        fields = ['price', 'deal_draft', 'prepayment_percentage', 'deal_draft_file']
 
 
 class OfferSerializer(serializers.ModelSerializer):
