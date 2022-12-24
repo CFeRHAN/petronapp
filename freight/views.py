@@ -206,12 +206,17 @@ def create_offer(request, order_pk, format=None):
         serializer = CreateOfferSerializer(data=request.data)
 
         if serializer.is_valid():
+
+            if key_existance(serializer.validated_data, 'deal_draft_file'):
+                    if not serializer.validated_data['deal_draft_file'] == '-':
+                        params = serializer.validated_data['deal_draft_file']
+                        uploader_validator(params)
+
             freight = User.objects.get(id=user.id)
             
             serializer.validated_data['freight'] = freight
             serializer.validated_data['order'] = order
             deal_draft = create_paperwork(serializer.validated_data['deal_draft_file'])
-            print(deal_draft.id)
             serializer.validated_data['deal_draft'] = deal_draft.id
             serializer.save()
 
