@@ -1,4 +1,5 @@
 from drf_yasg.utils import swagger_auto_schema
+from django.utils import timezone
 
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -50,6 +51,14 @@ def process_checkout(request, order_pk, offer_pk, format=None):
 
     serializer = CheckoutSerializer(context, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+def create_paperwork(file_id, date=None):
+    if date == None:
+        date = timezone.now()
+    return PaperWork.objects.create(bill_file=file_id, upload_date=date)
+
+
 
 
 

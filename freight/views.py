@@ -18,6 +18,7 @@ from freight.serializers import *
 
 from orders.models import *
 from orders.serializers import *
+from orders.views import create_paperwork
 
 from utils.validator import uploader_validator, key_existance
 from utils.senders import send_password
@@ -208,6 +209,8 @@ def create_offer(request, order_pk, format=None):
             
             serializer.validated_data['freight'] = freight
             serializer.validated_data['order'] = order
+            deal_draft = create_paperwork(serializer.validated_data['deal_draft'])
+            serializer.validated_data['deal_draft'] = deal_draft
             serializer.save()
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
