@@ -59,6 +59,12 @@ def create_paperwork(file_id, date=None):
     return PaperWork.objects.create(bill_file=file_id, upload_date=date)
 
 
+def create_payment(file_id, date=None):
+    if date == None:
+        date = timezone.now()
+    return Payment.objects.create(bill_file=file_id, payment_date=date)
+
+
 
 
 

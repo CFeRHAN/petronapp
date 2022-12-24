@@ -205,7 +205,7 @@ def create_offer(request, order_pk, format=None):
     elif user.role == "2":
         serializer = CreateOfferSerializer(data=request.data)
         if serializer.is_valid():
-            freight = Freight.objects.get(id=user.id)
+            freight = User.objects.get(id=user.id)
             
             serializer.validated_data['freight'] = freight
             serializer.validated_data['order'] = order
