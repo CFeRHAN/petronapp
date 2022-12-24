@@ -53,10 +53,10 @@ def process_checkout(request, order_pk, offer_pk, format=None):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-def create_paperwork(file_id, date=None):
+def create_paperwork(deal_draft_file, date=None):
     if date == None:
         date = timezone.now()
-    return PaperWork.objects.create(bill_file=file_id, upload_date=date)
+    return PaperWork.objects.create(bill_file=deal_draft_file, upload_date=date)
 
 
 def create_payment(file_id, date=None):

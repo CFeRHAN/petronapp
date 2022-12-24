@@ -204,20 +204,21 @@ def create_offer(request, order_pk, format=None):
     
     elif user.role == "2":
         serializer = CreateOfferSerializer(data=request.data)
+        req_serializer = CreateOfferReqSerializer(data=request.data)
 
-        if serializer.is_valid():
+        if req_serializer.is_valid() and serializer.is_valid():
 
-            if key_existance(serializer.validated_data, 'deal_draft_file'):
-                    if not serializer.validated_data['deal_draft_file'] == '-':
-                        params = serializer.validated_data['deal_draft_file']
+            if key_existance(req_serializer.validated_data, 'deal_draft_file'):
+                    if not req_serializer.validated_data['deal_draft_file'] == '-':
+                        params = req_serializer.validated_data['deal_draft_file']
                         uploader_validator(params)
 
             freight = User.objects.get(id=user.id)
             
             serializer.validated_data['freight'] = freight
             serializer.validated_data['order'] = order
-            deal_draft = create_paperwork(serializer.validated_data['deal_draft_file'])
-            serializer.validated_data['deal_draft'] = deal_draft.id
+            serializer.validated_data['deal_draft'] = create_paperwork(req_serializer.validated_data['deal_draft_file'])
+            print(serializer.validated_data)
             serializer.save()
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
