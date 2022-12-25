@@ -246,6 +246,10 @@ def offer_acception(request, order_pk, offer_pk, format=None):
     if user.role == "0":
         return Response(status=status.HTTP_401_UNAUTHORIZED)
     elif user.role == "3":
+        offers = Offer.objects.filter(order=order_pk)
+        for offer in offers:
+            if offer.freight_acception == True:
+                return Response({'message': 'you already accepted an offer for this order'}, status=status.HTTP_400_BAD_REQUEST)
         offer.orderer_acception = True
         offer.save()
         serializer = OfferAcceptionSerializer(offer)
