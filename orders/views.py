@@ -54,6 +54,17 @@ def process_checkout(request, order_pk, offer_pk, format=None):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+
+def offer_counter(order_pk):
+    try:
+        offer = Offer.objects.filter(order__id=order_pk)
+    except Offer.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    serializer = OfferCountSerializer(offer)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 def create_paperwork(deal_draft_file, date=None):
     if date == None:
         date = datetime.date.today()
@@ -64,6 +75,7 @@ def create_payment(file_id, date=None):
     if date == None:
         date = datetime.date.today()
     return Payment.objects.create(bill_file=file_id, payment_date=date)
+    
 
 
 
@@ -359,17 +371,6 @@ def create_payment(file_id, date=None):
 #         pass
 #     else:
 #         return Response(status=status.HTTP_400_BAD_REQUEST)
-
-
-# @api_view(['GET'])
-# def offer_counter(order_pk):
-#     try:
-#         offer = Offer.objects.get(order__id=order_pk)
-#     except Offer.DoesNotExist:
-#         return Response(status=status.HTTP_404_NOT_FOUND)
-
-#     serializer = OfferCountSerializer(offer)
-#     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 # @api_view(['GET'])

@@ -118,5 +118,8 @@ class Offer(models.Model):
     def get_remained_amount(self):
         return self.price - self.get_prepayment_amount()
     
+    def get_order(self):
+        return self.order
+
     def __str__(self):
         return f'{self.order.orderer} - {self.freight}'

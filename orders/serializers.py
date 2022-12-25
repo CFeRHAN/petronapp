@@ -58,7 +58,7 @@ class OfferSerializer(serializers.ModelSerializer):
         depth = 1
 
 
-    def get_prepayment_amount (request, self):
+    def get_prepayment_amount(request, self):
         """PrePayment Amount"""
         prepay = self.get_prepayment_amount()
         return prepay
@@ -323,3 +323,18 @@ class CheckoutSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
         fields = ['price']
+
+
+class OfferCountSerializer(serializers.ModelSerializer):
+    number = serializers.SerializerMethodField()
+    order = serializers.SerializerMethodField()
+    class Meta:
+        model = Offer
+        fields = ['number', 'order']
+
+    def get_number(request, self):
+        order = Offer.get_order()
+        qs = Offer.objects.filter(order=order)
+        number = qs.count()
+        print(number)
+        return 

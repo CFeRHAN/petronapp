@@ -17,6 +17,7 @@ from producer.models import Producer
 
 from orders.models import *
 from orders.serializers import *
+from orders.views import offer_counter
 
 from utils.validator import uploader_validator, key_existance, mobile_validator
 from utils.senders import send_password
@@ -110,8 +111,14 @@ def orders(request, format=None):
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         elif user.role == "3":
             orders = Order.objects.filter(orderer=user.id)
-            serializer = ProducerOrderSerializer(orders, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            y = []
+            for order in orders:
+                offers = Offer.objects.filter(order=order)
+                offer_count = len(offers)
+                serializer = ProducerOrderSerializer(order)
+                x = {'order':serializer.data, 'offer_count':offer_count}
+                y.append(x)
+            return Response(y, status=status.HTTP_200_OK)
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
     elif request.method == 'POST':

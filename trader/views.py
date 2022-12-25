@@ -93,7 +93,7 @@ def create_profile(request, pk, format = None):
         return Response({'message':'there is something wrong'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-@swagger_auto_schema(methods=['POST'], request_body=OrderSerializer)
+@swagger_auto_schema(methods=['POST'], request_body=CreateOrderSerializer)
 @api_view(['GET', 'POST'])
 def orders(request, format=None):
     """Lists all orders for express and user's order for trader"""
@@ -104,8 +104,14 @@ def orders(request, format=None):
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         elif user.role == "1":
             orders = Order.objects.filter(orderer=user.id)
-            serializer = OrderSerializer(orders, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            y = []
+            for order in orders:
+                offers = Offer.objects.filter(order=order)
+                offer_count = len(offers)
+                serializer = OrderSerializer(order)
+                x = {'order':serializer.data, 'offer_count':offer_count}
+                y.append(x)
+            return Response(y, status=status.HTTP_200_OK)
         
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
