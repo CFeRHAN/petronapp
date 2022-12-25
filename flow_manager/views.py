@@ -22,10 +22,13 @@ def flow_manager(request, order_pk, offer_pk, format=None):
         return Response({'next_step': 'Wait for an offer'}, status=status.HTTP_404_NOT_FOUND)
 
 
-    if offer.final_payment.status == True:
-        return Response({'next_step': 'you are done!'}, status=status.HTTP_200_OK)
+    try:
+        if offer.final_payment.receipt_status != None and offer.final_payment.receipt_status == True:
+            return Response({'next_step': 'you are done!'}, status=status.HTTP_200_OK)
+    except AttributeError:
+        return Response({'message': 'there is no final payment'}, status=status.HTTP_404_NOT_FOUND)
     
-    elif offer.final_payment.receipt_file != None:
+    if offer.final_payment.receipt_file != None:
         return Response({'next_step': 'final_payment_confirmation', 'user_role':'2'}, status=status.HTTP_200_OK)
     
     elif offer.inventory.receipt_status == True:

@@ -20,7 +20,7 @@ from orders.models import *
 from orders.serializers import *
 from orders.views import create_paperwork
 
-from utils.validator import uploader_validator, key_existance
+from utils.validator import uploader_validator, key_existance, mobile_validator
 from utils.senders import send_password
 
 
@@ -62,6 +62,14 @@ def create_profile(request, pk, format = None):
                     if not serializer.validated_data['permission_file'] == '-':
                         params = serializer.validated_data['permission_file']
                         uploader_validator(params)
+                
+                if key_existance(serializer.validated_data, 'agent_mobile'):
+                    mobile = serializer.validated_data['agent_mobile']
+                    mobile_validator(mobile)
+                
+                if key_existance(serializer.validated_data, 'mobile'):
+                    mobile = serializer.validated_data['mobile']
+                    mobile_validator(mobile)
                     
     
                 serializer.validated_data['role'] = '2'
