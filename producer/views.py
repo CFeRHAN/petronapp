@@ -55,15 +55,17 @@ def create_profile(request, pk, format = None):
                         params = serializer.validated_data['company_doc_file']
                         uploader_validator(params)
                 
-                if key_existance(serializer.validated_data, 'agent_mobile'):
-                    mobile = serializer.validated_data['agent_mobile']
-                    mobile_validator(mobile)
+                if key_existance(serializer.validated_data, 'agent_phone'):
+                    mobile = serializer.validated_data['agent_phone']
+                    agent_mobile = mobile_validator(mobile)
                 
                 if key_existance(serializer.validated_data, 'mobile'):
                     mobile = serializer.validated_data['mobile']
-                    mobile_validator(mobile)
+                    mobile = mobile_validator(mobile)
 
                 serializer.validated_data['role'] = '3'
+                serializer.validated_data['mobile'] = mobile
+                serializer.validated_data['agent_mobile'] = agent_mobile
                 serializer.save()
 
                 if 'password' not in serializer.validated_data:
