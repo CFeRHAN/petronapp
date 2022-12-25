@@ -218,7 +218,6 @@ def create_offer(request, order_pk, format=None):
             serializer.validated_data['freight'] = freight
             serializer.validated_data['order'] = order
             serializer.validated_data['deal_draft'] = create_paperwork(req_serializer.validated_data['deal_draft_file'])
-            print(serializer.validated_data)
             serializer.save()
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)

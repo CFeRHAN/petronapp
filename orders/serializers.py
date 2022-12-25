@@ -38,6 +38,7 @@ class CreateOfferSerializer(serializers.ModelSerializer):
     class Meta:
         model = Offer
         fields = ['price', 'deal_draft', 'prepayment_percentage']
+        depth = 1
 
 
 class CreateOfferReqSerializer(serializers.Serializer):
@@ -54,6 +55,7 @@ class OfferSerializer(serializers.ModelSerializer):
         model = Offer
         fields = ['id', 'freight', 'price', 'prepayment_percentage', 'deal_draft', 'prepayment_amount']
         read_only_fields = ['prepayment_amount']
+        depth = 1
 
 
     def get_prepayment_amount (request, self):

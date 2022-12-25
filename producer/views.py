@@ -139,7 +139,7 @@ def recieved_orders(request, format=None):
     """Creates new order with POST / Returns a list of orders with GET"""
     
     user = request.user
-    producer = Producer.objects.get(pk=user.id)
+    producer = User.objects.get(pk=user.id)
 
     if request.method == 'GET':
         print(user.role)
@@ -199,20 +199,17 @@ def offer_detail(request,order_pk, offer_pk, format=None):
 
     offer = Offer.objects.get(pk=offer_pk, order=order_pk)
     order = Order.objects.get(pk=order_pk)
-    freight = Freight.objects.get(pk=offer.freight)
+    freight = User.objects.get(pk=offer.freight.id)
 
     if user.role == "0":
         return Response(status=status.HTTP_401_UNAUTHORIZED)
 
     elif user.role == "3":
         offer_serializer = OfferSerializer(offer).data
-        order_serializer = Order_OfferSerializer(order).data
-        freight_serializer = Freight_OfferSerializer(freight).data
+        order_serializer = OrderSerializer(order).data
+        
 
-        return Response({'offer_items':offer_serializer, 
-                         'order_items':order_serializer,
-                         'freight_items':freight_serializer},
-                          status=status.HTTP_200_OK)
+        return Response({'offer_items':offer_serializer, 'order_items':order_serializer}, status=status.HTTP_200_OK)
 
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST)

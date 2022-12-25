@@ -1,5 +1,6 @@
 from drf_yasg.utils import swagger_auto_schema
 from django.utils import timezone
+import datetime
 
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -55,13 +56,13 @@ def process_checkout(request, order_pk, offer_pk, format=None):
 
 def create_paperwork(deal_draft_file, date=None):
     if date == None:
-        date = timezone.now()
+        date = datetime.date.today()
     return PaperWork.objects.create(bill_file=deal_draft_file, upload_date=date)
 
 
 def create_payment(file_id, date=None):
     if date == None:
-        date = timezone.now()
+        date = datetime.date.today()
     return Payment.objects.create(bill_file=file_id, payment_date=date)
 
 
