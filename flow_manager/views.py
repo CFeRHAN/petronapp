@@ -7,11 +7,12 @@ from rest_framework import status
 from orders.models import Order, Offer
 
 
+@api_view(['GET'])
 def flow_manager(request, order_pk, offer_pk, format=None):
     user = request.user
 
     try:
-        order = order.objects.get(pk=order_pk)
+        order = Order.objects.get(pk=order_pk)
     except Order.DoesNotExist:
         return Response({'next_step': 'Go create an order'}, status=status.HTTP_404_NOT_FOUND)
 
