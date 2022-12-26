@@ -216,12 +216,20 @@ def offer_detail(request, order_pk, offer_pk):
     except Offer.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
+    try:
+        order = Order.objects.get(pk=order_pk)
+    except Order.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+
     if user.role == "0":
         return Response(status=status.HTTP_401_UNAUTHORIZED)
 
     elif user.role == "1":
-        serializer = OfferSerializer(offer)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        offer_serializer = OfferSerializer(offer).data
+        order_serializer = OrderSerializer(order).data
+
+        return Response({'offer_items':offer_serializer, 'order_items':order_serializer}, status=status.HTTP_200_OK)
 
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST)
