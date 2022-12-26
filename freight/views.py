@@ -26,7 +26,7 @@ from utils.senders import send_password
 
 @swagger_auto_schema(methods=['POST'], request_body=CreateFreightProfileSerializer)
 @api_view(['GET', 'POST'])
-def create_profile(request, pk, format = None):
+def profile(request, pk, format = None):
     """endpoint that allows user to create Producer profile"""
 
     user = request.user
@@ -305,16 +305,18 @@ def offer_confirmation(request, order_pk, offer_pk, format=None):
         return Response(status=status.HTTP_401_UNAUTHORIZED)
     
     elif user.role == "2":
-
         order = Order.objects.get(pk=order_pk)
-        serializer = OfferSerializer(offer, data=request.data)
-        if serializer.is_valid():
-            serializer.validated_data['freight_acception'] = True
-            serializer.validated_data['order'] = order
-
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        offers = Offer.objects.filter(order=order_pk)
+        for offer in offers:
+            if offer.freight_acception == True:
+                return Response({'message': 'an other Freight company has already registered for this order'}, status=status.HTTP_400_BAD_REQUEST)
+        offer.freight_acception = True
+        offer.order = order
+        offer.save()
+        serializer = OfferSerializer(offer)
+        
+        return Response(serializer.data, status=status.HTTP_200_OK)
+        
     
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST)

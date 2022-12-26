@@ -98,17 +98,18 @@ class LoginView(APIView):
         return Response({'jwt': 'token'})
 
 
+@swagger_auto_schema(methods=['POST'], request_body=UpdatePasswordSerializer)
 @api_view(['POST'])
 def update_password(request, password, new_password):
     user = request.user
+    if user.role != '0':
+        old_password = user.set_password(password)
 
-    a = user.set_password(password)
-
-    if user.password == a:
-        user.set_password(new_password)
-        
-
-    return Response({'success':'now you can login with your new password'}, status=status.HTTP_200_OK)
+        if user.password == old_password:
+            user.set_password(new_password)    
+            return Response({'success':'password updated; now you can login with your new password'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'failure':'password does not match the old password'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 

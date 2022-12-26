@@ -23,7 +23,7 @@ from utils.senders import send_password
 
 @swagger_auto_schema(methods=['POST'], request_body=CreateTraderProfileSerializer)
 @api_view(['GET', 'POST'])
-def create_profile(request, pk, format = None):
+def profile(request, pk, format = None):
     """endpoint that allows user to create Trader profile"""
 
     user = request.user
@@ -207,12 +207,12 @@ def offers(request, order_pk, format=None):
 
 @swagger_auto_schema(methods=['PUT'], request_body=OfferSerializer)
 @api_view(['GET', 'PUT'])
-def offer_detail(request, offer_pk):
+def offer_detail(request, order_pk, offer_pk):
 
     user = request.user
 
     try:
-        offer = Offer.objects.get(pk=offer_pk)
+        offer = Offer.objects.get(pk=offer_pk, order_id=order_pk)
     except Offer.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -251,7 +251,7 @@ def offer_acception(request, order_pk, offer_pk, format=None):
         offer.save()
         serializer = OfferAcceptionSerializer(offer)
         
-        return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST)

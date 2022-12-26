@@ -25,7 +25,7 @@ from utils.senders import send_password
 
 @swagger_auto_schema(methods=['POST'], request_body=CreateProducerProfileSerializer)
 @api_view(['GET', 'POST'])
-def create_profile(request, pk, format = None):
+def profile(request, pk, format = None):
     """endpoint that allows user to create Producer Profile"""
     
     user = request.user    
@@ -215,7 +215,6 @@ def offer_detail(request,order_pk, offer_pk, format=None):
 
     offer = Offer.objects.get(pk=offer_pk, order=order_pk)
     order = Order.objects.get(pk=order_pk)
-    freight = User.objects.get(pk=offer.freight.id)
 
     if user.role == "0":
         return Response(status=status.HTTP_401_UNAUTHORIZED)
@@ -300,8 +299,16 @@ def upload_order_number(request, order_pk, offer_pk, format=None):
         return Response(status=status.HTTP_401_UNAUTHORIZED)
 
     elif user.role == "3":
+        
         serializer = UploadOrderNumberSerializer(offer, data=request.data)
+        
         if serializer.is_valid():
+
+            if key_existance(serializer.validated_data, 'profile_picture_file'):
+                    if not serializer.validated_data['profile_picture_file'] == '-':
+                        params = serializer.validated_data['profile_picture_file']
+                        uploader_validator(params)
+
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
 
