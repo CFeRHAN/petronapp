@@ -205,8 +205,7 @@ def offers(request, order_pk, format=None):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-@swagger_auto_schema(methods=['PUT'], request_body=OfferSerializer)
-@api_view(['GET', 'PUT'])
+@api_view(['GET'])
 def offer_detail(request, order_pk, offer_pk):
 
     user = request.user
@@ -220,7 +219,6 @@ def offer_detail(request, order_pk, offer_pk):
         order = Order.objects.get(pk=order_pk)
     except Order.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
-
 
     if user.role == "0":
         return Response(status=status.HTTP_401_UNAUTHORIZED)
@@ -260,7 +258,6 @@ def offer_acception(request, order_pk, offer_pk, format=None):
         serializer = OfferAcceptionSerializer(offer)
         
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
@@ -309,13 +306,11 @@ def send_order_number(request, order_pk, offer_pk):
 
         order_number = order.order_number_file
         offer.order_number_file = order_number
+        offer.save()
 
-        serializer = ViewOrderNumberSerializer(offer.order_number_file, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
+        serializer = ViewOrderNumberSerializer(offer, data=request.data)
 
-        return Response({'message': 'there is something wrong with in the serializer or data'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST)

@@ -119,6 +119,26 @@ def orders(request, format=None):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
+@api_view(['GET'])
+def accepted_orders(request, format=None):
+
+    user = request.user
+
+    if user.role == "0":
+        return Response(status=status.HTTP_401_UNAUTHORIZED)
+    
+    elif user.role == "2":
+        offers = Offer.objects.filter(freight=user, offer_confirmation=True)
+        orders = []
+        for offer in offers:
+            order = Order.objects.get(pk=offer.order.id)
+            orders.append(order)
+
+        serializer = OrderSerializer(orders, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    else:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
 
 
 @api_view(['GET'])

@@ -213,8 +213,15 @@ def offer_detail(request, order_pk, offer_pk, format=None):
 
     user = request.user
 
-    offer = Offer.objects.get(pk=offer_pk, order=order_pk)
-    order = Order.objects.get(pk=order_pk)
+    try:
+        offer = Offer.objects.get(pk=offer_pk, order_id=order_pk)
+    except Offer.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    try:
+        order = Order.objects.get(pk=order_pk)
+    except Order.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
     if user.role == "0":
         return Response(status=status.HTTP_401_UNAUTHORIZED)
@@ -244,6 +251,7 @@ def offer_acception(request, order_pk, offer_pk, format=None):
 
     if user.role == "0":
         return Response(status=status.HTTP_401_UNAUTHORIZED)
+
     elif user.role == "3":
         offers = Offer.objects.filter(order=order_pk)
         for offer in offers:
@@ -299,16 +307,12 @@ def upload_order_number(request, order_pk, offer_pk, format=None):
         return Response(status=status.HTTP_401_UNAUTHORIZED)
 
     elif user.role == "3":
-        
-        serializer = UploadOrderNumberSerializer(offer, data=request.data)
+        order = Order.objects.get(pk=order_pk)
+
+        serializer = UploadOrderNumberSerializer(order, data=request.data)
         
         if serializer.is_valid():
-
-            if key_existance(serializer.validated_data, 'profile_picture_file'):
-                    if not serializer.validated_data['profile_picture_file'] == '-':
-                        params = serializer.validated_data['profile_picture_file']
-                        uploader_validator(params)
-
+            
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
 

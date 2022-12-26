@@ -314,7 +314,7 @@ class UploadFinalPaymentReceipt(serializers.ModelSerializer):
 class UploadOrderNumberSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = Offer
+        model = Order
         fields = ['order_number', 'order_number_file']
 
 
