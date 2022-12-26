@@ -128,7 +128,7 @@ def accepted_orders(request, format=None):
         return Response(status=status.HTTP_401_UNAUTHORIZED)
     
     elif user.role == "2":
-        offers = Offer.objects.filter(freight=user, offer_confirmation=True)
+        offers = Offer.objects.filter(freight=user, freight_acception=True)
         orders = []
         for offer in offers:
             order = Order.objects.get(pk=offer.order.id)
