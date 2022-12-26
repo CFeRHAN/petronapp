@@ -197,7 +197,7 @@ def offer_detail(request, order_pk, offer_pk, format=None):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-@swagger_auto_schema(methods=['POST'], request_body=CreateOfferSerializer)
+@swagger_auto_schema(methods=['POST'], request_body=CreateOfferReqSerializer)
 @api_view(['POST'])
 def create_offer(request, order_pk, format=None):
     """endpoint that allows a Freight company to create an offer for specified order"""

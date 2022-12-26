@@ -57,8 +57,8 @@ def profile(request, pk, format = None):
                         uploader_validator(params)
                 
                 if key_existance(serializer.validated_data, 'agent_phone'):
-                    mobile = serializer.validated_data['agent_phone']
-                    agent_mobile = mobile_validator(mobile)
+                    agent_mobile = serializer.validated_data['agent_phone']
+                    agent_mobile = mobile_validator(agent_mobile)
                 
                 if key_existance(serializer.validated_data, 'mobile'):
                     mobile = serializer.validated_data['mobile']
@@ -208,7 +208,7 @@ def offers(request, order_pk, format=None):
 
 
 @api_view(['GET'])
-def offer_detail(request,order_pk, offer_pk, format=None):
+def offer_detail(request, order_pk, offer_pk, format=None):
     """endpoint that returns details about an offer"""
 
     user = request.user
