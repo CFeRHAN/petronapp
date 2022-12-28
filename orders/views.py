@@ -59,6 +59,20 @@ def process_checkout(request, order_pk, offer_pk, format=None):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+@api_view(['PUT'])
+def seen_offer(request, offer_pk):
+    user = request.user
+
+    try:
+        offer = Offer.objects.get(pk=offer_pk)
+    except Offer.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    offer.seen = True
+    offer.save()
+    return Response(status=status.HTTP_200_OK)
+
+
 
 def offer_counter(order_pk):
     try:
@@ -81,6 +95,7 @@ def create_payment(file_id, date=None):
         date = datetime.date.today()
     return Payment.objects.create(bill_file=file_id, payment_date=date)
     
+
 
 
 

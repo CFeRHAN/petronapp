@@ -101,6 +101,7 @@ class Offer(models.Model):
     
     deal_draft = models.ForeignKey(PaperWork, on_delete=models.DO_NOTHING, related_name='prescript', null=True, blank=True)
     load_info = models.ForeignKey(PaperWork, on_delete=models.DO_NOTHING, related_name='load_info', null=True, blank=True)
+    seen = models.BooleanField(default=False, null=True, blank=True)
 
 
     def get_percentage(self):
