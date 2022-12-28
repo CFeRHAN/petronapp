@@ -6,7 +6,7 @@ from .views import *
 urlpatterns = [
 
     path('orders/', order_dynamic_filter, name='orders'),
-    path('orders/', seen_offer, name='seen_offer'),
+    path('orders/<int:offer_pk>/', seen_offer, name='seen_offer'),
     path('<int:order_pk>/offers/<int:offer_pk>/process_checkout/', process_checkout, name='process_checkout'),
     # path('orders/<int:order_pk>/', order_detail, name='order_detail'),
     # path('orders/<int:order_pk>/offers/', offers, name='offers'),
