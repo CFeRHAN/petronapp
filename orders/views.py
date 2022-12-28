@@ -17,6 +17,7 @@ def order_dynamic_filter(request, format=None):
     deal_type_query = request.GET.get('deal_type')
     start_date = request.GET.get('start_date')
     end_date = request.GET.get('end_date')
+    border_passage = request.GET.get('border_passage')
 
     if weight_query != '' and weight_query is not None:
         queryset = queryset.filter(weight=weight_query)
@@ -26,6 +27,10 @@ def order_dynamic_filter(request, format=None):
 
     elif deal_type_query != '' and deal_type_query is not None:
         queryset = queryset.filter(deal_type=deal_type_query)
+
+    elif border_passage is not None:
+        queryset = queryset.filter(border_passage)
+
 
     serializer = OrderSerializer(queryset, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)

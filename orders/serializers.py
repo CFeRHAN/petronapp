@@ -338,3 +338,5 @@ class OfferCountSerializer(serializers.ModelSerializer):
         number = qs.count()
         print(number)
         return 
+
+
