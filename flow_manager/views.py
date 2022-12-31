@@ -113,14 +113,14 @@ from orders.models import Order, Offer
     
 
 @api_view(['GET'])
-def flow(order_pk, offer_pk, request):
+def flow(offer_pk, request):
     user = request.user
 
     if user.role == '1':
         _trader_(offer_pk)
     
     if user.role == '2':
-        _freight_()
+        _freight_(offer_pk)
     
     if user.role == '3':
         _producer_(offer_pk)
@@ -171,48 +171,31 @@ def flow(order_pk, offer_pk, request):
         if offer.final_payment.bill_status == 'True' and not offer.final_payment.receipt_file:
             return Response({'next_step': 'upload final payment receipt'})
 
-
-        # if offer.demurrage.receipt_file:
-        #     return Response({'next_step': 'final checkout'})
-
-        # elif offer.inventory.receipt_file:
-        #     return Response({'next_step': 'upload demurrage receipt'})
-
-        # elif offer.demurrage.bill_status == 'True':
-        #     return Response({'next_step': 'upload inventory receipt'})
-
-        # elif offer.inventory.bill_status == 'True':
-        #     return Response({'next_step': 'confirm demurrage bull'})
-
-        # elif offer.order.second_destination and offer.order.orderer_completion_date:
-        #     return Response({'next_step': 'confirm inventory bill'})
-
-        # elif not offer.order.orderer_completion_date:
-        #     return Response({'next_step': 'define a second destination'})
-
-        # elif offer.order.orderer_completion_date:
-        #     return Response({'next_step': 'confirm inventory bill'})
-
-        # elif offer.lading_bill.status == 'True':
-        #     return Response({'next_step': 'time for done approval'})
-
-        # elif offer.prepayment.receipt_status == 'True':
-        #     return Response({'next_step': 'confirm lading bill'})
-
-        # elif offer.prepayment.bill_file != None:
-        #     return Response({'next_step': 'confirm prepayment receipt'})
-
-        # elif offer.prepayment != None:
-        #     return Response({'next_step': 'upload prepayment bill'})
+    def _freight_(offer_pk):
         
-        # elif offer.prepayment == None:
-        #     return Response({'next_step': 'confirm lading bill'})
+        offer = Offer.objects.get(pk=offer_pk)
 
-        # elif offer.order.order_number:
-        #     return Response({'next_step':'send order number to freight'})
+        if offer.order_number_file and not offer.order_number_seen_status:
+            return Response({'next_step': 'view order number'})
+        
+        if offer.order_number_seen_status and not offer.drivers_info.bill_file:
+            return Response({'next_step': 'upload drivers info'})
+        
+        if offer.drivers_info.status and not offer.inventory.bill_file:
+            return Response({'next_step': 'upload inventory bill'})
+        
+        if offer.inventory.bill_status and not offer.demurrage.bill_status:
+            return Response({'next_step': 'confirm demurrage bill'})
+        
+        if offer.demurrage.bill_status and not offer.prepayment_percentage:
+            return Response({'next_step': 'view load info'})
+        
+        if offer.demurrage.bill_status and offer.prepayment_percentage:
+            return Response({'next_step': 'confirm prepayment bill'})
+        
+        if offer.prepayment_percentage and not offer.prepayment.bill_status:
+            return Response({'next_step': 'upload prepayment receipt'})
 
-
-    def _freight_():
         pass
 
     def _producer_(offer_pk):

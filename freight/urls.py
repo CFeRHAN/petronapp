@@ -14,6 +14,7 @@ urlpatterns = [
     path('orders/offer_wait_list/', offer_wait_list, name='offer_wait_list'),
     path('orders/accepted_orders/', accepted_orders, name='accepted_orders'),
     path('orders/<int:order_pk>/offers/<int:offer_pk>/offer_confirmation/', offer_confirmation, name='offer_confirmation'),
+    path('orders/<int:order_pk>/offers/<int:offer_pk>/order_number/', view_order_number, name='view_order_number'),
     path('orders/<int:order_pk>/offers/<int:offer_pk>/drivers_info/', upload_drivers_info, name='upload_drivers_info'),
     path('orders/<int:order_pk>/offers/<int:offer_pk>/demurrage_bill/', upload_demurrage_bill, name='upload_demurrage_bill'),
     path('orders/<int:order_pk>/offers/<int:offer_pk>/inventory_bill/', confirm_inventory_bill, name='confirm_inventory_bill'),

@@ -204,6 +204,11 @@ class FreightCompletionAprroveserializer(serializers.ModelSerializer):
         fields = ['freight_completion_date']
 
 
+class ViewOrderNumberSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Offer
+        field = ['order_number', 'order_number_file', 'order_number_seen_status']
+
 
 class UploadDriversInfoSerializer(serializers.ModelSerializer):
     class Meta:

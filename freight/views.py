@@ -342,6 +342,30 @@ def offer_confirmation(request, order_pk, offer_pk, format=None):
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['GET'])
+def view_order_number(request, order_pk, offer_pk, format=None):
+    """endpoint that allows a Freight company to view order_number"""
+
+    user = request.user
+
+    try:
+        offer = Offer.objects.get(pk=offer_pk, order=order_pk)
+    except Offer.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if user.role == '0':
+        return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+    elif user.role == '2':
+        serializer = ViewOrderNumberSerializer(offer)
+        serializer.validated_data['order_number_seen_status'] = 'True'
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    else:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
 
 @swagger_auto_schema(methods=['POST'], request_body=UploadDriversInfoSerializer)
 @api_view(['POST'])
