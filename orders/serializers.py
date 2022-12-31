@@ -53,7 +53,7 @@ class OfferSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Offer
-        fields = ['id', 'freight', 'price', 'prepayment_percentage', 'deal_draft', 'prepayment_amount']
+        fields = ['id', 'freight', 'price', 'prepayment_percentage', 'deal_draft', 'prepayment_amount', 'seen']
         read_only_fields = ['prepayment_amount']
         depth = 1
 
@@ -197,6 +197,7 @@ class OrdererCompletionAprroveserializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = ['orderer_completion_date']
+
 
 class FreightCompletionAprroveserializer(serializers.ModelSerializer):
     class Meta:
