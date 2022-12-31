@@ -145,11 +145,29 @@ def flow(order_pk, offer_pk, request):
         if offer.lading_bill.status == 'False':
             return Response({'next_step': 'confirm lading bill'})
 
-        if offer.order.orderer_completion_date:
+        
+        if offer.order.orderer_completion_date and offer.order.freight_completion_date:
             return Response({'next_step': 'confirm inventory bill'})
         
-        if not offer.order.orderer_completion_date and offer.order.freight_completion_date:
-            return Response({'next_step': ''})
+        """here should be the second destination trigger"""
+
+        if offer.inventory.bill_status and offer.inventory.bill_file== 'False':
+            return Response({'next_step': 'confirm inventory bill'})
+
+        if offer.inventory.bill_status == 'True' and not offer.inventory.receipt_file:
+            return Response({'next_step': 'upload inventory receipt'})
+
+        if offer.demurrage.bill_file and offer.demurrage.bill_status == 'False':
+            return Response({'next_step': 'confirm demurrage bill'})
+        
+        if offer.demurrage.bill_status == 'True' and not offer.demurrage.receipt_file:
+            return Response({'nex_step': 'upload demurrage receipt'})
+        
+        if offer.final_payment.bill_file and offer.final_payment.bill_status == 'False':
+            return Response({'next_step': 'confirm final payment bill'})
+        
+        if offer.final_payment.bill_status == 'True' and not offer.final_payment.receipt_file:
+            return Response({'next_step': 'upload final payment receipt'})
 
 
         # if offer.demurrage.receipt_file:
