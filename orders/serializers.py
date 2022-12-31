@@ -193,10 +193,15 @@ class ConfirmSecondDestinationBillSerializer(serializers.ModelSerializer):
         read_only_fields = ['bill_file']
 
 
-class OrderCompletionAprroveserializer(serializers.ModelSerializer):
+class OrdererCompletionAprroveserializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = ['orderer_completion_date']
+
+class FreightCompletionAprroveserializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order
+        fields = ['freight_completion_date']
 
 
 

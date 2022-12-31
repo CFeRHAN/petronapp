@@ -542,7 +542,6 @@ def upload_demurrage_receipt(request, order_pk, offer_pk, format=None):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-@swagger_auto_schema(methods=['PUT'], request_body=OrderCompletionAprroveserializer)
 @api_view(['PUT'])
 def order_completion_approval(request, order_pk, offer_pk, format=None):
     """endpoint that allows Trader company to approve that an order cycle is finished"""    
@@ -561,8 +560,7 @@ def order_completion_approval(request, order_pk, offer_pk, format=None):
         order = Order.objects.get(pk=order_pk)
         order.orderer_completion_date = timezone.now()
         order.save()
-        serializer = OrderCompletionAprroveserializer(order)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({'success':'True'}, status=status.HTTP_200_OK)
 
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST)

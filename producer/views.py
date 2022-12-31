@@ -677,7 +677,6 @@ def confirm_second_destination_bill(request, order_pk, offer_pk, format=None):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-@swagger_auto_schema(methods=['PUT'], request_body=OrderCompletionAprroveserializer)
 @api_view(['PUT'])
 def order_completion_approval(request, order_pk, offer_pk, format=None):
     """endpoint that allows Producer company to approve that an order cycle is finished"""    
@@ -696,8 +695,7 @@ def order_completion_approval(request, order_pk, offer_pk, format=None):
         order = Order.objects.get(pk=order_pk)
         order.orderer_completion_date = timezone.datetime.now()
         order.save()
-        serializer = OrderCompletionAprroveserializer(order)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({'success':'True'}, status=status.HTTP_200_OK)
 
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -708,7 +706,6 @@ def order_completion_approval(request, order_pk, offer_pk, format=None):
 def view_all_producers(request, format=None):
     user = request.user
     if user.role != '0' :
-        #producers = Producer.objects.all()            # ALWAYS return [] queryset, because the Producer table has no data
         producers = User.objects.filter(role='3')
         serializer = ProducerSerializer(producers, many=True)
         return Response(serializer.data, status = status.HTTP_200_OK)
