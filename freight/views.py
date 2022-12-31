@@ -615,7 +615,6 @@ def confirm_bijak_bill(request, order_pk, offer_pk, format=None):
         return Response(status=status.HTTP_400_BAD_REQUEST)
     
 
-@swagger_auto_schema(methods=['PUT'], request_body=FreightCompletionAprroveserializer)
 @api_view(['PUT'])
 def order_completion_approval(request, order_pk, offer_pk, format=None):
     """endpoint that allows Freight company to approve that an order cycle is finished"""
