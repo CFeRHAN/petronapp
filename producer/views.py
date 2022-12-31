@@ -336,6 +336,7 @@ def view_drivers_info(request, order_pk, offer_pk, format=None):
     elif user.role == "3":
         serializer = ViewDriversInfoSerializer(offer, data=request.data)
         if serializer.is_valid():
+            serializer.validated_data['status'] = 'True'
             serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
     else:

@@ -123,7 +123,7 @@ def flow(order_pk, offer_pk, request):
         _freight_()
     
     if user.role == '3':
-        _producer_()
+        _producer_(offer_pk)
 
 
     def _trader_(offer_pk):
@@ -145,8 +145,10 @@ def flow(order_pk, offer_pk, request):
         if offer.lading_bill.status == 'False':
             return Response({'next_step': 'confirm lading bill'})
 
-        
-        if offer.order.orderer_completion_date and offer.order.freight_completion_date:
+        if offer.order.freight_completion_date:
+            return Response({'next_step': 'orderer done approval'})
+
+        if offer.order.freight_completion_date and offer.order.orderer_completion_date:
             return Response({'next_step': 'confirm inventory bill'})
         
         """here should be the second destination trigger"""
@@ -213,5 +215,45 @@ def flow(order_pk, offer_pk, request):
     def _freight_():
         pass
 
-    def _producer_():
-        pass
+    def _producer_(offer_pk):
+        
+        offer = Offer.objects.get(id=offer_pk, producer=user)
+        order = Order.objects.get(id=offer.order.id)
+
+        if offer.freight_acception == 'True' and not order.order_number:
+            return Response({'next_step': 'upload order number'})
+        
+        if offer.drivers_info.status == 'False':
+            return Response({'next_step': 'view_drivers info'})
+        
+        if offer.drivers_info.status == 'True' and not offer.inventory.bill_file:
+            return Response({'next_step': 'upload inventory bill'})
+
+        if offer.inventory.bill_file and offer.demurrage.bill_status == 'False':
+            return Response({'next_step': 'confirm demurrage bill'})
+        
+        if offer.demurrage.bill_status == 'True' and not offer.load_info.bill_file:
+            return Response({'next_step': 'upload load info'})
+
+        if offer.load_info.bill_file and offer.order.border_passage:
+            return Response({'next_step': 'upload invoice packing'})
+        
+        if offer.invoice_packing.bill_file and offer.lading_bill.status == 'False':
+            return Response({'next_step': 'view lading bill'})
+        
+        if offer.lading_bill.status == 'True' and not offer.bijak.bill_file:
+            return Response({'next_step': 'upload bijak'})
+        
+        if (not offer.order.border_passage and offer.load_info.bill_file) or offer.bijak.status:
+            return Response({'next_step': 'confirm inventory bill'})
+        
+        if offer.bijak.status == True and offer.inventory.receipt_status == 'False':
+            return Response({'next_step': 'confirm inventory receipt'})
+        
+        if offer.inventory.receipt_status == 'True' and not offer.demurrage.receipt_file:
+            return Response({'next_step': 'upload demurrage receipt'})
+
+        if offer.demurrage.receipt_status == 'True':
+            return Response({'next_step': 'you are done.'})
+        elif offer.demurrage.receipt_status == 'False':
+            return Response({'next_step':'there is an issue with demurrage/inventory file please try uploading it again.'})

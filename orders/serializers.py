@@ -103,8 +103,7 @@ class OfferAcceptionSerializer(serializers.ModelSerializer):
 class ViewDriversInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Offer
-        fields = ['drivers_info']
-        depth = 1
+        fields = ['drivers_info', 'status']
 
 
 class UploadInventoryBillSerializer(serializers.ModelSerializer):
