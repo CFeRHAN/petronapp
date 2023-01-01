@@ -191,13 +191,13 @@ def offers(request, format=None):
 
 @swagger_auto_schema(methods=['PUT'], request_body=OfferSerializer)
 @api_view(['GET','PUT'])
-def offer_detail(request, order_pk, offer_pk, format=None):
+def offer_detail(request, offer_pk, format=None):
     """endpoint that returns details about an offer made by the Freight company and let them update it"""
 
     user = request.user
 
     try:
-        offer = Offer.objects.get(pk=offer_pk, order=order_pk)
+        offer = Offer.objects.get(pk=offer_pk)
     except Offer.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
