@@ -120,7 +120,7 @@ def orders(request, format=None):
 
 
 @api_view(['GET'])
-def accepted_orders(request, format=None):
+def accepted_offers(request, format=None):
 
     user = request.user
 
@@ -128,17 +128,28 @@ def accepted_orders(request, format=None):
         return Response(status=status.HTTP_401_UNAUTHORIZED)
     
     elif user.role == "2":
-        offers = Offer.objects.filter(freight=user, freight_acception=True)
-        orders = []
-        for offer in offers:
-            order = Order.objects.get(pk=offer.order.id)
-            orders.append(order)
+        offers = Offer.objects.filter(freight=user, freight_acception=True, orderer_acception=True)
 
-        serializer = OrderSerializer(orders, many=True)
+        serializer = OfferSerializer(offers, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
+
+@api_view(['GET'])
+def nonaccepted_offers(request, format=None):
+    user = request.user
+
+    if user.role == "0":
+        return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+    elif user.role == "2":
+        offers = Offer.objects.filter(freight=user, orderer_acception=False)
+        serializer = OfferSerializer(offers, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    else:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET'])
@@ -523,6 +534,9 @@ def view_load_information(request, order_pk, offer_pk, format=None):
     
     elif user.role == "2":
         serializer = ViewLoadInfoSerializer(offer)
+        load_info = offer.load_info
+        load_info.status = True
+        load_info.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     else:

@@ -115,22 +115,22 @@ from orders.models import Order, Offer
 @api_view(['GET'])
 def flow(offer_pk, request):
     user = request.user
+    offer = Offer.objects.get(pk=offer_pk)
+    
+    if offer.order.contract_type == 'FCA':
 
-    if user.role == '1':
-        _trader_(offer_pk)
-    
-    if user.role == '2':
-        _freight_(offer_pk)
-    
-    if user.role == '3':
-        _producer_(offer_pk)
+        if user.role == '1':
+            _trader_(offer_pk)
+        
+        if user.role == '2':
+            _freight_(offer_pk)
+        
+        if user.role == '3':
+            _producer_(offer_pk)
 
 
     def _trader_(offer_pk):
         offer = Offer.objects.get(pk=offer_pk, freight_acception=True)
-
-        order = offer.order.id
-        order = Order.objects.get(pk=order)
 
         if not offer.order_number:
             return Response({'next_step': 'send order number to frieght'})
@@ -195,15 +195,42 @@ def flow(offer_pk, request):
         
         if offer.prepayment_percentage and not offer.prepayment.bill_status:
             return Response({'next_step': 'upload prepayment receipt'})
+        
+        if offer.prepayment.receipt_file and offer.load_info.status == 'False':
+            return Response({'next_step': 'view load info'})
+        
+        if offer.load_info.status and not offer.lading_bill.bill_file:
+            return Response({'next_step': 'upload lading bill'})
+        
+        if offer.order.border_passage and not offer.bijak.status:
+            return Response({'next_step': 'confirm bijak'})
+        
+        if not offer.order.border_passage and not offer.order.freight_completion_date:
+            return Response({'next_step': 'freight done approval'})
+        
+        if offer.bijak.status and not offer.order.freight_completion_date:
+            return Response({'next_step': 'freight done approval'})
+        
+        if offer.order.second_destination and not offer.second_destination_cost.bill_file:
+            return Response({'next_step':'upload second destination bill'})
+        
+        if offer.second_destination_cost and not offer.inventory.receipt_file:
+            return Response({'next_step': 'upload inventory receipt'})
+        
+        if not offer.order.second_destination and offer.order.freight_completion_date:
+            return Response({'next_step': 'upload inventory receipt'})
+        
+        if offer.inventory.receipt_status:
+            return Response({'you are done.'})
+
 
         pass
 
     def _producer_(offer_pk):
         
         offer = Offer.objects.get(id=offer_pk, producer=user)
-        order = Order.objects.get(id=offer.order.id)
 
-        if offer.freight_acception == 'True' and not order.order_number:
+        if offer.freight_acception == 'True' and not offer.order.order_number:
             return Response({'next_step': 'upload order number'})
         
         if offer.drivers_info.status == 'False':
