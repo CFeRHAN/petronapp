@@ -144,7 +144,7 @@ def nonaccepted_offers(request, format=None):
         return Response(status=status.HTTP_401_UNAUTHORIZED)
 
     elif user.role == "2":
-        offers = Offer.objects.filter(freight=user, orderer_acception=False)
+        offers = Offer.objects.filter(freight=user, freight_acception=False)
         serializer = OfferSerializer(offers, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
@@ -308,24 +308,6 @@ def update_offer(request, order_pk, offer_pk, format=None):
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    else:
-        return Response(status=status.HTTP_400_BAD_REQUEST)
-
-
-@api_view(['GET'])
-def offer_wait_list(request, format=None):
-    """endpoint that returns a list of offers which are not accepted yet"""
-
-    user = request.user
-
-    if user.role == "0":
-        return Response(status=status.HTTP_401_UNAUTHORIZED)
-    
-    elif user.role == "2":
-        offers = Offer.objects.filter(freight=user, orderer_acception=False)
-        serializer = OfferSerializer(offers, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST)
 

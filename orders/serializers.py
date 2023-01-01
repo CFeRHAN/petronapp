@@ -53,9 +53,9 @@ class OfferSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Offer
-        fields = ['id', 'freight', 'price', 'prepayment_percentage', 'deal_draft', 'prepayment_amount', 'seen']
+        fields = ['id', 'freight', 'price', 'prepayment_percentage', 'deal_draft', 'prepayment_amount', 'seen', 'order', 'freight_acception', 'orderer_acception']
         read_only_fields = ['prepayment_amount']
-        depth = 1
+        depth = 2
 
 
     def get_prepayment_amount(request, self):
@@ -85,12 +85,13 @@ class OfferDetailSerializer(serializers.ModelSerializer):
         fields = ['freights_items', 'price', 'prepayment_percentage', 'deal_draft', 'order_items']
 
 
-class ViewOrderNumberSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Offer
-        fields = ['order_number', 'order_number_file']
-        depth = 1
-        read_only_fields = ['offer', 'order_number', 'order_number_file']
+# class ViewOrderNumberSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Offer
+#         fields = '__all__'
+#         # fields = ['order_number', 'order_number_file']
+#         # depth = 1
+#         # read_only_fields = ['offer']
 
 
 class OfferAcceptionSerializer(serializers.ModelSerializer):
@@ -207,7 +208,7 @@ class FreightCompletionAprroveserializer(serializers.ModelSerializer):
 class ViewOrderNumberSerializer(serializers.ModelSerializer):
     class Meta:
         model = Offer
-        field = ['order_number', 'order_number_file', 'order_number_seen_status']
+        fields = ['order_number', 'order_number_file', 'order_number_seen_status']
 
 
 class UploadDriversInfoSerializer(serializers.ModelSerializer):
