@@ -41,6 +41,12 @@ class CreateOfferSerializer(serializers.ModelSerializer):
         depth = 1
 
 
+class UpdateOfferSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Offer
+        fields = ['price', 'prepayment_percentage']
+
+
 class CreateOfferReqSerializer(serializers.Serializer):
     price = serializers.FloatField()
     prepayment_percentage = serializers.IntegerField()
