@@ -173,7 +173,7 @@ def order_detail(request, order_pk, format=None):
 
 
 @api_view(['GET'])
-def offers(request, order_pk, format=None):
+def offers(request, format=None):
     """endpoint that returns a list of offers that is made by the Freight company"""
 
     user = request.user
