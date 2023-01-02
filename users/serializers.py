@@ -23,6 +23,8 @@ class ObtainTokenSerializer(serializers.Serializer):
     created = serializers.BooleanField()
     user_role = serializers.CharField(max_length=128, allow_null=True)
     user_id = serializers.IntegerField(allow_null=True)
+    company_name = serializers.CharField()
+    profile_picture_file = serializers.CharField()
 
 
 class UpdatePasswordSerializer(serializers.Serializer):

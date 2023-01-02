@@ -621,6 +621,33 @@ def confirm_second_destination_bill(request, order_pk, offer_pk, format=None):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
+@swagger_auto_schema(methods=['PUT'], request_body=UploadSecondDestinationReceiptSerializer)
+@api_view(['PUT'])
+def upload_second_destination_cost_receipt(request, order_pk, offer_pk, format=None):
+
+    user = request.user
+
+    try:
+        offer = Offer.objects.get(pk=offer_pk)
+    except Offer.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    if user.role == '0':
+        return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+    elif user.role == '1':
+
+        serializer = UploadSecondDestinationReceiptSerializer(offer, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
+        return Response({'message':'invalid data'}, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        return Response({'message':'400-This endpoint does not belong to your role'}, status=status.HTTP_400_BAD_REQUEST)
+    
+
+
 @swagger_auto_schema(methods=['PUT'], request_body=UploadFinalPaymentReceipt)
 @api_view(['PUT'])
 def upload_final_payment_receipt(request, order_pk, offer_pk, format=None):

@@ -63,7 +63,10 @@ class OTPView(APIView):
             'token': str(refresh.access_token),
             'created':created,
             'user_role': user.role,
-            'user_id': user.id
+            'user_id': user.id,
+            'company_name': user.company_name,
+            'profile_picture_file': user.profile_picture_file,
+
         }).data
 
 

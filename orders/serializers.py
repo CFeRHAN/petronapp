@@ -199,6 +199,14 @@ class ConfirmSecondDestinationBillSerializer(serializers.ModelSerializer):
         read_only_fields = ['bill_file']
 
 
+class UploadSecondDestinationReceiptSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Payment
+        fields = ['receipt_file', 'bill_file']
+        read_only_fields = ['bill_file']
+
+
+
 class OrdererCompletionAprroveserializer(serializers.ModelSerializer):
     class Meta:
         model = Order
