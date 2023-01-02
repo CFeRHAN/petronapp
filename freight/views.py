@@ -189,8 +189,8 @@ def offers(request, format=None):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-@swagger_auto_schema(methods=['PUT'], request_body=OfferSerializer)
-@api_view(['GET','PUT'])
+
+@api_view(['GET'])
 def offer_detail(request, offer_pk, format=None):
     """endpoint that returns details about an offer made by the Freight company and let them update it"""
 
@@ -212,32 +212,6 @@ def offer_detail(request, offer_pk, format=None):
         
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-    
-    elif request.method == 'PUT':
-
-        if user.role == "0":
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
-        
-        elif user.role == "2":
-            price = offer.price
-            seen = offer.seen
-            serializer = CreateOfferSerializer(offer, data=request.data)
-            if serializer.is_valid():
-                if seen == True:
-                    if serializer.validated_data['price'] < price:
-                        serializer.save()
-                        offer.seen = False
-                        offer.save()
-                        return Response(serializer.data, status=status.HTTP_200_OK)
-                    else:
-                        return Response({'message': 'current price is higher than you latest.'})
-                else:
-                    return Response({'message':'seen status problem'}, status=status.HTTP_400_BAD_REQUEST)
-        
-            else:
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            return Response({'message': 'there are some user permission problem here.'})
 
 
 @swagger_auto_schema(methods=['POST'], request_body=CreateOfferReqSerializer)
@@ -279,7 +253,7 @@ def create_offer(request, order_pk, format=None):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-@swagger_auto_schema(methods=['POST'], request_body=CreateOfferSerializer)
+@swagger_auto_schema(methods=['POST'], request_body=UpdateOfferSerializer)
 @api_view(['POST'])
 def update_offer(request, order_pk, offer_pk, format=None):
     """endpoint that allows a Freight company to update an offer for specified order"""
@@ -305,6 +279,7 @@ def update_offer(request, order_pk, offer_pk, format=None):
             
             serializer.validated_data['freight'] = freight
             serializer.validated_data['order'] = order
+            serializer.validated_data['seen'] = False
             serializer.save()
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -313,8 +288,6 @@ def update_offer(request, order_pk, offer_pk, format=None):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-
-@swagger_auto_schema(methods=['PUT'], request_body=OfferSerializer)
 @api_view(['PUT'])
 def offer_confirmation(request, order_pk, offer_pk, format=None):
     """endpoint that allows a Freight company to confirm an already given offer"""

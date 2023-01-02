@@ -233,7 +233,6 @@ def offer_detail(request, order_pk, offer_pk):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-@swagger_auto_schema(methods=['PUT'], request_body=OfferSelectionSerializer)
 @api_view(['PUT'])
 def offer_acception(request, order_pk, offer_pk, format=None):
     """endpoint that allows Trader to select an offer for the giver order"""
