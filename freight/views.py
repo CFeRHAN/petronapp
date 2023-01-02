@@ -225,8 +225,9 @@ def offer_detail(request, offer_pk, format=None):
             if serializer.is_valid():
                 if seen == True:
                     if serializer.validated_data['price'] < price:
-                        serializer.validated_data['seen'] = False
                         serializer.save()
+                        offer.seen = False
+                        offer.save()
                         return Response(serializer.data, status=status.HTTP_200_OK)
                     else:
                         return Response({'message': 'current price is higher than you latest.'})
