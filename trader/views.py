@@ -262,6 +262,31 @@ def offer_acception(request, order_pk, offer_pk, format=None):
 
 
 @api_view(['GET'])
+def approved_orders(request, format=None):
+    """endpoint that returns a list of Producer's orders that have been approved"""
+
+    user = request.user
+
+    if user.role == "0":
+        return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+    elif user.role == "3":
+        
+        offers = Offer.objects.filter(order__orderer=user, orderer_acception=True, freight_acception=True)
+        orders = []
+        for offer in offers:
+            order_id = offer.order.id
+            a = Order.objects.get(id=order_id)
+            orders.append(a)
+        serializer = OrderSerializer(orders, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    else:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
 def view_deal_draft(request, order_pk, offer_pk, format=None):
     """endpoints that shows the deal draft to Trader"""
 
@@ -311,28 +336,6 @@ def send_order_number(request, order_pk, offer_pk):
 
         return Response(serializer.data, status=status.HTTP_200_OK)
     
-    else:
-        return Response(status=status.HTTP_400_BAD_REQUEST)
-
-
-@api_view(['GET'])
-def approved_orders(request):
-    """endpoint that retrieves orders that are approved by a Freigth company"""
-
-    user = request.user
-
-    if user.role == "0":
-        return Response(status=status.HTTP_401_UNAUTHORIZED)
-
-    elif user.role == "1":
-        offers = Offer.objects.filter(order__user=user, orderer_acception=True, freight_acception=True)
-        orders = []
-        for offer in offers:
-            order_id = offer.order.id  # check this out
-            orders.append(Order.objects.filter(user=user, id=order_id))
-        serializer = OrderSerializer(orders, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
