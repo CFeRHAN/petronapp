@@ -111,8 +111,18 @@ def orders(request, format=None):
         return Response(status=status.HTTP_401_UNAUTHORIZED)
     
     elif user.role == "2":
-        orders = Order.objects.all()
-        serializer = OrderSerializer(orders, many=True)
+        
+        orders = Order.objects.filter(freight_acception=False)
+        offers = Offer.objects.filter(freight=user)
+
+        orders_with_my_offer = []
+        for offer in offers:
+            order = Order.objects.get(pk=offer.order.id)
+            orders_with_my_offer.append(order)
+        
+        available_orders = orders - orders_with_my_offer
+        serializer = OrderSerializer(available_orders, many=True)
+
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     else:
@@ -240,11 +250,12 @@ def create_offer(request, order_pk, format=None):
                         params = req_serializer.validated_data['deal_draft_file']
                         uploader_validator(params)
 
-            freight = User.objects.get(id=user.id)
             
-            serializer.validated_data['freight'] = freight
+            serializer.validated_data['freight'] = user
             serializer.validated_data['order'] = order
             serializer.validated_data['deal_draft'] = create_paperwork(req_serializer.validated_data['deal_draft_file'])
+            if Offer.objects.filter(freight=user, order=order.id).exists():
+                return Response({'message': 'you already have an offer for this order'}, status=status.HTTP_403_FORBIDDEN)
             serializer.save()
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
