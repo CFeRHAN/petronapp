@@ -112,15 +112,11 @@ def orders(request, format=None):
     
     elif user.role == "2":
         
-        orders = Order.objects.filter(freight_acception=False)
-        offers = Offer.objects.filter(freight=user)
-
-        orders_with_my_offer = []
-        for offer in offers:
-            order = Order.objects.get(pk=offer.order.id)
-            orders_with_my_offer.append(order)
-        
-        available_orders = orders - orders_with_my_offer
+        orders = Order.objects.all()
+        my_offers = Offer.objects.filter(freight=user).values_list('order_id', flat=True)
+        accepted_offers = Offer.objects.filter(freight_acception=True).values_list('order_id', flat=True)
+        available_orders = orders.exclude(pk__in=my_offers)
+        available_orders = available_orders.exclude(pk__in=accepted_offers)
         serializer = OrderSerializer(available_orders, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)

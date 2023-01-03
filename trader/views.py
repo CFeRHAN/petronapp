@@ -270,7 +270,7 @@ def approved_orders(request, format=None):
     if user.role == "0":
         return Response(status=status.HTTP_401_UNAUTHORIZED)
 
-    elif user.role == "3":
+    elif user.role == "1":
         
         offers = Offer.objects.filter(order__orderer=user, orderer_acception=True, freight_acception=True)
         orders = []
