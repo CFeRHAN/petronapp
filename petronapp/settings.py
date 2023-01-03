@@ -98,6 +98,17 @@ DATABASES = {
 }
 
 
+# DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.postgresql',
+#        'NAME': 'petronapp_db',
+#        'USER': 'petronapp_backend',
+#        'PASSWORD': 'petronappB@ck1401_6icwT58#U*',
+#        'HOST': '45.139.10.161',
+#        'PORT': '50432',
+#    }
+}
+
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
