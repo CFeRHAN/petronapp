@@ -29,7 +29,7 @@ class ObtainTokenSerializer(serializers.Serializer):
 
 class UpdatePasswordSerializer(serializers.Serializer):
     password = serializers.CharField()
-    odl_password = serializers.CharField()
+    new_password = serializers.CharField()
 
 
 class UserSerializer(serializers.ModelSerializer):

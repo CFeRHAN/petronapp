@@ -11,7 +11,7 @@ class Freight(models.Model):
     # vehicle_no = models.IntegerField() 
 
     def __str__(self):
-        return self.company_name
+        return self.user.company_name
 
 
 class VehicleType(models.Model):
