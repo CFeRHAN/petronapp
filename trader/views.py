@@ -28,6 +28,7 @@ def profile(request, pk, format = None):
 
     user = request.user
     trader = User.objects.get(pk=user.id)
+    print(trader)
 
     if request.method == 'GET':
         serializer = CreateTraderProfileSerializer(trader)
@@ -61,9 +62,7 @@ def profile(request, pk, format = None):
                 if key_existance(serializer.validated_data, 'mobile'):
                     mobile = serializer.validated_data['mobile']
                     mobile = mobile_validator(mobile)
-                        
-                    
-                serializer.validated_data['role'] = '1'
+                                            
                 serializer.validated_data['mobile'] = mobile
                 serializer.validated_data['agent_mobile'] = agent_mobile
                 serializer.save()
@@ -80,9 +79,13 @@ def profile(request, pk, format = None):
                     
                 trader.set_password(password)  
                 trader.role = '1'
+                trader.mobile = mobile
                 data = {'password':password, 'recipient':user.mobile}
                 send_password(data)
                 trader.save()
+                profile = Trader()
+                profile.user = user
+                profile.save()
 
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

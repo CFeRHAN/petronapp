@@ -75,7 +75,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     company_address = models.TextField(blank=False, null=False)                                                                              #آدرس شرکت
     ceo_name = models.CharField(max_length=50, blank=False, null=False)                                                                      #نام مدیر عامل
     agent_name = models.CharField(max_length=50, blank=False, null=False)                                                                    #نام نماینده
-    agent_phone = models.CharField(max_length=11, blank=False, null=False)                                                                   #شماره تماس نماینده
+    agent_phone = models.CharField(max_length=12, blank=False, null=False)                                                                   #شماره تماس نماینده
     agent_email = models.EmailField(blank=False, null=False)                                                                                 # ایمیل نماینده شرکت
     license_file = models.CharField(max_length=35, blank=False, null=False)                                                                  # اساسنامه
     company_doc_file = models.CharField(max_length=35, blank=False, null=False)                                                              # فایل ثبت شرکت

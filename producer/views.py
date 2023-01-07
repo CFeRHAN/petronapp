@@ -85,6 +85,9 @@ def profile(request, pk, format = None):
                 data = {'password': password, 'recipient':user.mobile}
                 send_password(data)
                 producer.save()
+                profile = Producer()
+                profile.user = user
+                profile.save()
 
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

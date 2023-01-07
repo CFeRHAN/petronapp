@@ -12,7 +12,6 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 
-
 from freight.models import Freight
 from freight.serializers import *
 
@@ -22,6 +21,8 @@ from orders.views import create_paperwork
 
 from utils.validator import uploader_validator, key_existance, mobile_validator
 from utils.senders import send_password
+
+from flow_manager.views import flow_manager
 
 
 @swagger_auto_schema(methods=['POST'], request_body=CreateFreightProfileSerializer)
@@ -41,6 +42,7 @@ def profile(request, pk, format = None):
         if user.role == "0":
             serializer = CreateFreightProfileSerializer(freight, data=request.data)
             if serializer.is_valid():
+                print('permission: ', serializer.validated_data['permission_file'])
                 
                 if key_existance(serializer.validated_data, 'profile_picture_file'):
                     if not serializer.validated_data['profile_picture_file'] == '-':
@@ -92,6 +94,11 @@ def profile(request, pk, format = None):
                 data = {'password': password, 'recipient':user.mobile}
                 send_password(data)
                 freight.save()
+                profile = Freight()
+                profile.user = freight
+                profile.permission_file = serializer.validated_data['permission_file']
+                profile.save()
+
 
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -135,6 +142,7 @@ def accepted_offers(request, format=None):
     
     elif user.role == "2":
         offers = Offer.objects.filter(freight=user, freight_acception=True, orderer_acception=True)
+        offer_id = offers.values_list('id', flat=True)
 
         serializer = OfferSerializer(offers, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

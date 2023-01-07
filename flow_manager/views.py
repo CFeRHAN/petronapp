@@ -6,6 +6,7 @@ from rest_framework import status
 
 from orders.models import Order, Offer
 
+    # {'code': 'FMF01', 'text': 'مشاهده شماره سفارش', 'description': 'send order number to frieght'}
 
 @api_view(['GET'])
 def flow_manager_api(request, offer_pk):
@@ -18,8 +19,13 @@ def flow_manager_api(request, offer_pk):
     return Response(flow_manager(offer_pk, offer, user))
 
 
-def flow_manager(offer_pk, offer, user):
-    # {'code': 'FMF01', 'text': 'مشاهده شماره سفارش', 'description': 'send order number to frieght'}
+def flow_manager(offer_pk, user):
+
+    try:
+        offer = Offer.objects.get(pk=offer_pk)
+    except Offer.DoesNotExist:
+        return Response({'message': f'offer {offer_pk} not found'})
+
         
     if offer.order.contract_type == '1':
         if user.role == '1':
@@ -29,7 +35,7 @@ def flow_manager(offer_pk, offer, user):
             return _freight_(offer, user)
         
         if user.role == '3':
-            return _producer_(offer_pk, user)
+            return _producer_(offer, user)
 
         else:
             return {'message':'user permission denied'}
@@ -128,8 +134,7 @@ def _freight_(offer, user):
         return {'description': 'you are done.'}
 
 
-def _producer_(offer_pk, user):
-    offer = Offer.objects.get(id=offer_pk, producer=user)
+def _producer_(offer, user):
 
     if offer.freight_acception == 'True' and not offer.order.order_number:
         return {'code': 'FMP01', 'text': 'بارگذاری فایل شماره سفارش', 'description': 'upload order number'}
