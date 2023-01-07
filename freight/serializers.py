@@ -7,4 +7,4 @@ class CreateFreightProfileSerializer(serializers.ModelSerializer):
     """Serializer for creating a new Express profile"""
     class Meta:
         model = Freight
-        exclude = ['is_active','is_staff','is_superuser', 'groups', 'user_permissions', 'last_login', 'role']
+        exclude = ['is_active','is_staff','is_superuser', 'groups', 'user_permissions', 'last_login', 'role', 'permission_file']
