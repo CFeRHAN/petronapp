@@ -143,8 +143,13 @@ def accepted_offers(request, format=None):
     elif user.role == "2":
         offers = Offer.objects.filter(freight=user, freight_acception=True, orderer_acception=True)
         offer_id = offers.values_list('id', flat=True)
+        accepted_offers = []
+        for id in offer_id:
+            flow = flow_manager(id, user)
+            offer = Offer.objects.get(pk=id)
+            accepted_offers.append({offer:flow})
 
-        serializer = OfferSerializer(offers, many=True)
+        serializer = OfferSerializer(accepted_offers, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST)
