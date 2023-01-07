@@ -262,7 +262,7 @@ def offer_acception(request, order_pk, offer_pk, format=None):
 
 
 @api_view(['GET'])
-def approved_orders(request, format=None):
+def approved_offers(request, format=None):
     """endpoint that returns a list of Producer's orders that have been approved"""
 
     user = request.user
@@ -270,16 +270,15 @@ def approved_orders(request, format=None):
     if user.role == "0":
         return Response(status=status.HTTP_401_UNAUTHORIZED)
 
-    elif user.role == "1":
-        
+    elif user.role == "1":        
         offers = Offer.objects.filter(order__orderer=user, orderer_acception=True, freight_acception=True)
-        orders = []
-        for offer in offers:
-            order_id = offer.order.id
-            a = Order.objects.get(id=order_id)
-            orders.append(a)
-        serializer = OrderSerializer(orders, many=True)
-
+        serializer = OfferSerializer(offers, many=True)
+        # orders = []
+        # for offer in offers:
+        #     order_id = offer.order.id
+        #     a = Order.objects.get(id=order_id)
+        #     orders.append(a)
+        # serializer = OrderSerializer(orders, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     else:

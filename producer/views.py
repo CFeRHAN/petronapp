@@ -2,6 +2,7 @@ import random
 import string
 
 from django.utils import timezone
+from django.db.models import Q
 
 from drf_yasg.utils import swagger_auto_schema
 
@@ -267,7 +268,7 @@ def offer_acception(request, order_pk, offer_pk, format=None):
 
 
 @api_view(['GET'])
-def approved_orders(request, format=None):
+def approved_offers(request, format=None):
     """endpoint that returns a list of Producer's orders that have been approved"""
 
     user = request.user
@@ -276,15 +277,14 @@ def approved_orders(request, format=None):
         return Response(status=status.HTTP_401_UNAUTHORIZED)
 
     elif user.role == "3":
-        
-        offers = Offer.objects.filter(order__orderer=user, orderer_acception=True, freight_acception=True)
-        orders = []
-        for offer in offers:
-            order_id = offer.order.id
-            a = Order.objects.get(id=order_id)
-            orders.append(a)
-        serializer = OrderSerializer(orders, many=True)
-
+        offers = Offer.objects.filter(Q(order__orderer=user) | Q(order__producer=user), orderer_acception=True, freight_acception=True)    
+        serializer = OfferSerializer(offers, many=True)
+        # orders = []
+        # for offer in offers:
+        #     order_id = offer.order.id
+        #     a = Order.objects.get(id=order_id)
+        #     orders.append(a)
+        # serializer = OrderSerializer(orders, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     else:
