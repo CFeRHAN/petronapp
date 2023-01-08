@@ -32,7 +32,7 @@ def mailotp(otp):
 def send_otp(otp):
     url = settings.SMSSERVER
     data = {'recipient':otp.receiver, 'otp':otp.password }
-    # requests.post(url, data=data)
+    requests.post(url, data=data)
     print("otp password")   
     print(otp.password)
     print(otp.receiver)
@@ -45,7 +45,7 @@ def send_password(data):
     url = settings.PASSWORD_SMSSERVER
     data = {'recipient':data['recipient'], 'message':message}
     print(data)
-    # requests.post(url, data=data)
+    requests.post(url, data=data)
     return Response(data, status=status.HTTP_200_OK)
     
 
