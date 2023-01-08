@@ -27,7 +27,6 @@ def flow_manager(offer_pk, user):
         return Response({'message': f'offer {offer_pk} not found'})
 
 
-    print('contract', offer.order.contract_type)    
     if offer.order.contract_type == '0':
         if user.role == '1':
             return _trader_(offer, user)

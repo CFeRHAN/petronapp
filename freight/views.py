@@ -141,16 +141,16 @@ def accepted_offers(request, format=None):
         return Response(status=status.HTTP_401_UNAUTHORIZED)
     
     elif user.role == "2":
-        print(user.role)
         offers = Offer.objects.filter(freight=user, freight_acception=True, orderer_acception=True)
-        print(offers)
         offer_id = offers.values_list('id', flat=True)
+        accepted_offers = []
         for id in offer_id:
             flow = flow_manager(id, user)
-            print(flow)
+            offer = Offer.objects.get(id=id)
+            accepted_offers.append({'offer':OfferSerializer(offer).data, 'flow':flow})
 
         serializer = OfferSerializer(offers, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(accepted_offers , status=status.HTTP_200_OK)
     else:
         print(user.role)
         return Response(status=status.HTTP_400_BAD_REQUEST)
