@@ -3,15 +3,15 @@ from users.models import User
 from file_manager.models import Attachment
 
 
-class Freight(models.Model):
+class Freight(User):
     """Model for Express"""
-    user = models.OneToOneField(User, related_name='Freight_Profile', on_delete=models.DO_NOTHING)
+    # user = models.OneToOneField(User, related_name='Freight_Profile', on_delete=models.DO_NOTHING)
     permission_file = models.CharField(max_length=35, blank=False, null=False)
 
     # vehicle_no = models.IntegerField() 
 
     def __str__(self):
-        return self.user.company_name
+        return self.company_name
 
 
 class VehicleType(models.Model):

@@ -7,7 +7,5 @@ from users.models import User
 class CreateTraderProfileSerializer(serializers.ModelSerializer):
     """Serializer for creating a new trader profile"""
     class Meta:
-        model = User
-        # fields = '__all__'
+        model = Trader
         exclude = ['is_active','is_staff','is_superuser', 'groups', 'user_permissions', 'last_login', 'role']
-        # exclude = ['user']

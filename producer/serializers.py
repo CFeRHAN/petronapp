@@ -14,5 +14,5 @@ class CreateProducerProfileSerializer(serializers.ModelSerializer):
 
 class ProducerSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Producer
+        model = User
         fields = ['id', 'company_name', 'ceo_name']

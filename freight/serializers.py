@@ -9,5 +9,7 @@ class CreateFreightProfileSerializer(serializers.ModelSerializer):
     permission_file = serializers.CharField()
 
     class Meta:
-        model = User
+        model = Freight
+        # fields = '__all__'
         exclude = ['is_active','is_staff','is_superuser', 'groups', 'user_permissions', 'last_login', 'role']
+        # depth = 1

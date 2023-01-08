@@ -31,10 +31,13 @@ def profile(request, pk, format = None):
     """endpoint that allows user to create Producer profile"""
 
     user = request.user
-    freight = User.objects.get(pk=user.id)
+    mobile = user.mobile
+    user.delete()
+    freight = Freight.objects.create(mobile=mobile)
 
     if request.method == 'GET':
         serializer = CreateFreightProfileSerializer(freight)
+        print(serializer)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     elif request.method == 'POST':
@@ -93,11 +96,8 @@ def profile(request, pk, format = None):
                 freight.role = '2'
                 data = {'password': password, 'recipient':user.mobile}
                 send_password(data)
+                freight.permission_file = serializer.validated_data['permission_file']
                 freight.save()
-                profile = Freight()
-                profile.user = freight
-                profile.permission_file = serializer.validated_data['permission_file']
-                profile.save()
 
 
                 return Response(serializer.data, status=status.HTTP_201_CREATED)

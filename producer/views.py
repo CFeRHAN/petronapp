@@ -29,8 +29,10 @@ from utils.senders import send_password
 def profile(request, pk, format = None):
     """endpoint that allows user to create Producer Profile"""
     
-    user = request.user    
-    producer = User.objects.get(pk=user.id)
+    user = request.user
+    mobile = user.mobile
+    user.delete() 
+    producer = Producer.objects.get(mobile=mobile)
 
     if request.method == 'GET':
         serializer = CreateProducerProfileSerializer(producer)
