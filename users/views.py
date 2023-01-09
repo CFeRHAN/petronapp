@@ -79,6 +79,7 @@ class RegisterView(APIView):
 
 
 class LoginView(APIView):
+    @swagger_auto_schema(request_body=LoginSerializer)
     def post(self, request):
 
         if '@' in request.data['username']:
@@ -101,9 +102,9 @@ class LoginView(APIView):
             'iat': datetime.datetime.utcnow()
         }
         
-        token = jwt.encode(payload, 'secret', algorithm='H256').decode('utf-8')
+        token = jwt.encode(payload, 'secret', algorithm='HS256')
 
-        return Response({'jwt': 'token'})
+        return Response({'jwt': token})
 
 
 @swagger_auto_schema(methods=['POST'], request_body=UpdatePasswordSerializer)

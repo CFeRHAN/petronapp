@@ -23,7 +23,7 @@ from utils.senders import send_password
 
 @swagger_auto_schema(methods=['POST'], request_body=CreateTraderProfileSerializer)
 @api_view(['GET', 'POST'])
-def profile(request, pk, format = None):
+def profile(request, format=None):
     """endpoint that allows user to create Trader profile"""
 
     user = request.user

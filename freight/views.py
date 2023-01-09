@@ -27,7 +27,7 @@ from flow_manager.views import flow_manager
 
 @swagger_auto_schema(methods=['POST'], request_body=CreateFreightProfileSerializer)
 @api_view(['GET', 'POST'])
-def profile(request, pk, format=None):
+def profile(request, format=None):
     """endpoint that allows user to create Producer profile"""
 
     user = request.user

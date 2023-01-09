@@ -26,7 +26,7 @@ from utils.senders import send_password
 
 @swagger_auto_schema(methods=['POST'], request_body=CreateProducerProfileSerializer)
 @api_view(['GET', 'POST'])
-def profile(request, pk, format = None):
+def profile(request, format=None):
     """endpoint that allows user to create Producer Profile"""
     
     user = request.user
