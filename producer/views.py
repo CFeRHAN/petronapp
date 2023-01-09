@@ -32,7 +32,7 @@ def profile(request, pk, format = None):
     user = request.user
     mobile = user.mobile
     user.delete() 
-    producer = Producer.objects.get(mobile=mobile)
+    producer = Producer.objects.create(mobile=mobile)
 
     if request.method == 'GET':
         serializer = CreateProducerProfileSerializer(producer)
@@ -87,9 +87,6 @@ def profile(request, pk, format = None):
                 data = {'password': password, 'recipient':user.mobile}
                 send_password(data)
                 producer.save()
-                profile = Producer()
-                profile.user = user
-                profile.save()
 
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

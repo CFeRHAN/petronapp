@@ -27,7 +27,7 @@ from flow_manager.views import flow_manager
 
 @swagger_auto_schema(methods=['POST'], request_body=CreateFreightProfileSerializer)
 @api_view(['GET', 'POST'])
-def profile(request, pk, format = None):
+def profile(request, pk, format=None):
     """endpoint that allows user to create Producer profile"""
 
     user = request.user
@@ -97,7 +97,6 @@ def profile(request, pk, format = None):
                 data = {'password': password, 'recipient':user.mobile}
                 send_password(data)
                 freight.permission_file = serializer.validated_data['permission_file']
-                print('freight:::', freight.role)
                 freight.save()
 
 
