@@ -28,15 +28,17 @@ def profile(request, format=None):
 
     user = request.user
     mobile = user.mobile
-    user.delete()
-    trader = Trader.objects.create(mobile=mobile)
+    
 
 
     if request.method == 'GET':
-        serializer = CreateTraderProfileSerializer(trader)
+        user = Trader.objects.get(mobile=mobile)
+        serializer = CreateTraderProfileSerializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     elif request.method == 'POST':
+        user.delete()
+        trader = Trader.objects.create(mobile=mobile)
         if user.role == "0":
             serializer = CreateTraderProfileSerializer(trader, data=request.data)
             if serializer.is_valid():

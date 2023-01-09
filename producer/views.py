@@ -31,14 +31,16 @@ def profile(request, format=None):
     
     user = request.user
     mobile = user.mobile
-    user.delete() 
-    producer = Producer.objects.create(mobile=mobile)
+    
 
     if request.method == 'GET':
-        serializer = CreateProducerProfileSerializer(producer)
+        user = Producer.objects.get(mobile=mobile)
+        serializer = CreateProducerProfileSerializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     elif request.method == 'POST':
+        user.delete() 
+        producer = Producer.objects.create(mobile=mobile)
         if user.role == "0":
             serializer = CreateProducerProfileSerializer(producer, data=request.data)
             if serializer.is_valid():

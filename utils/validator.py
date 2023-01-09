@@ -36,15 +36,18 @@ def mobile_validator(mobile):
         if item not in valid_chars:
             return False
 
-    if (mobile[:3] != '989' or len(str(mobile)) != 12):
+    if len(str(mobile)) == 10:
+        true_mobile = '98' + mobile
+        return true_mobile
+
+    elif (mobile[:3] != '989' or len(str(mobile)) != 12):
         true_mobile = '98' + mobile[1:]
         return true_mobile
+
     elif (mobile[0:3] == '989' or len(str(mobile)) == 12):
         return mobile
     
-    elif len(str(mobile) == 10):
-        true_mobile = '98' + mobile
-        return true_mobile
+
 
 
     

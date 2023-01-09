@@ -32,15 +32,17 @@ def profile(request, format=None):
 
     user = request.user
     mobile = user.mobile
-    user.delete()
-    freight = Freight.objects.create(mobile=mobile)
+    
 
     if request.method == 'GET':
-        serializer = CreateFreightProfileSerializer(freight)
+        user = Freight.objects.get(mobile=mobile)
+        serializer = CreateFreightProfileSerializer(user)
         print(serializer)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     elif request.method == 'POST':
+        user.delete()
+        freight = Freight.objects.create(mobile=mobile)
 
         if user.role == "0":
             serializer = CreateFreightProfileSerializer(freight, data=request.data)
