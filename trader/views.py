@@ -21,6 +21,9 @@ from orders.serializers import *
 from utils.validator import uploader_validator, key_existance, mobile_validator
 from utils.senders import send_password
 
+from flow_manager.views import flow_manager
+
+
 @swagger_auto_schema(methods=['POST'], request_body=CreateTraderProfileSerializer)
 @api_view(['GET', 'POST'])
 def profile(request, format=None):
@@ -276,15 +279,14 @@ def approved_offers(request, format=None):
 
     elif user.role == "1":        
         offers = Offer.objects.filter(order__orderer=user, orderer_acception=True, freight_acception=True)
-        serializer = OfferSerializer(offers, many=True)
-        # orders = []
-        # for offer in offers:
-        #     order_id = offer.order.id
-        #     a = Order.objects.get(id=order_id)
-        #     orders.append(a)
-        # serializer = OrderSerializer(orders, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
+        offer_id = offers.values_list('id', flat=True)
+        approved_offers = []
+        for id in offer_id:
+            flow = flow_manager(id, user)
+            offer = offer.objects.get(id=id)
+            approved_offers.append({'offer':OfferSerializer(offer).data, 'flow':flow})
+        
+        return Response(approved_offers, status=status.HTTP_200_OK)
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST)
 

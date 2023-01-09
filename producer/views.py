@@ -23,6 +23,8 @@ from orders.views import offer_counter
 from utils.validator import uploader_validator, key_existance, mobile_validator
 from utils.senders import send_password
 
+from flow_manager.views import flow_manager
+
 
 @swagger_auto_schema(methods=['POST'], request_body=CreateProducerProfileSerializer)
 @api_view(['GET', 'POST'])
@@ -282,13 +284,13 @@ def approved_offers(request, format=None):
 
     elif user.role == "3":
         offers = Offer.objects.filter(Q(order__orderer=user) | Q(order__producer=user), orderer_acception=True, freight_acception=True)    
-        serializer = OfferSerializer(offers, many=True)
-        # orders = []
-        # for offer in offers:
-        #     order_id = offer.order.id
-        #     a = Order.objects.get(id=order_id)
-        #     orders.append(a)
-        # serializer = OrderSerializer(orders, many=True)
+        offer_id = offers.values_list("id", flat=True)
+        approved_offers = []
+        for id in offer_id:
+            flow = flow_manager(id, user)
+            offer = Offer.objects.get(id=id)
+            approved_offers.append({'offer':OfferSerializer(offer).data, 'flow':flow})
+            
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     else:

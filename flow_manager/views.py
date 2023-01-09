@@ -52,9 +52,6 @@ def _trader_(offer, user):
     if not offer.lading_bill:
         return {'code': 'FMX00', 'text': 'در انتظار', 'description': 'waiting...'}
 
-    if not offer.lading_bill:
-        return {'code': 'FMX00', 'text': 'در انتظار', 'description': 'waiting...'}
-
     if offer.lading_bill.status == 'False':
         return {'code': 'FMT04', 'text': 'تایید بارنامه', 'description': 'confirm lading bill'}
 
