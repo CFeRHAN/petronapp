@@ -11,11 +11,6 @@ from orders.models import Order, Offer
 @api_view(['GET'])
 def flow_manager_api(request, offer_pk):
     user = request.user
-    try:
-        offer = Offer.objects.get(pk=offer_pk)
-    except Offer.DoesNotExist:
-        return Response({'message': f'offer {offer_pk} not found'})
-
     return Response(flow_manager(offer_pk, user))
 
 
