@@ -16,7 +16,7 @@ def flow_manager_api(request, offer_pk):
     except Offer.DoesNotExist:
         return Response({'message': f'offer {offer_pk} not found'})
 
-    return Response(flow_manager(offer_pk, offer, user))
+    return Response(flow_manager(offer_pk, user))
 
 
 def flow_manager(offer_pk, user):
@@ -139,7 +139,7 @@ def _freight_(offer, user):
     
     if not offer.bijak:
         return {'code': 'FMX00', 'text': 'در انتظار', 'description': 'waiting...'}
-        
+
     if offer.order.border_passage and not offer.bijak.status:
         return {'code': 'FMF10', 'text': 'تایید بیجک', 'description': 'confirm bijak'}
     
@@ -167,25 +167,35 @@ def _producer_(offer, user):
     if offer.freight_acception == 'True' and not offer.order.order_number:
         return {'code': 'FMP01', 'text': 'بارگذاری فایل شماره سفارش', 'description': 'upload order number'}
     
+    if not offer.driver_info:
+        return {'code': 'FMX00', 'text': 'در انتظار', 'description': 'waiting...'}
+
     if offer.drivers_info.status == 'False':
         return {'code': 'FMP02', 'text': 'مشاهده اطلاعات رانندگان', 'description': 'view drivers info'}
     
-    if offer.drivers_info.status == 'True' and not offer.inventory.bill_file:
+    
+    if offer.drivers_info.status == 'True' and not offer.inventory:
         return {'code': 'FMP03', 'text': 'بارگذاری قبض هزینه‌های انبارداری', 'description': 'upload inventory bill'}
+    
+    if not offer.demurrage:
+        return {'code': 'FMX00', 'text': 'در انتظار', 'description': 'waiting...'}
 
     if offer.inventory.bill_file and offer.demurrage.bill_status == 'False':
         return {'code': 'FMP04', 'text': 'تایید قبض هزینه‌های دموراژ', 'description': 'confirm demurrage bill'}
     
-    if offer.demurrage.bill_status == 'True' and not offer.load_info.bill_file:
+    if offer.demurrage.bill_status == 'True' and not offer.load_info:
         return {'code': 'FMP05', 'text': 'بارگذاری فایل مشخصات بار', 'description': 'upload load info'}
 
     if offer.load_info.bill_file and offer.order.border_passage:
         return {'code': 'FMP06', 'text': 'بارگذاری فاکتور بسته‌بندی ', 'description': 'upload invoice packing'}
+
+    if not offer.lading_bill:
+        return {'code': 'FMX00', 'text': 'در انتظار', 'description': 'waiting...'}
     
     if offer.invoice_packing.bill_file and offer.lading_bill.status == 'False':
         return {'code': 'FMP07', 'text': 'مشاهده فایل بارنامه', 'description': 'view lading bill'}
     
-    if offer.lading_bill.status == 'True' and not offer.bijak.bill_file:
+    if offer.lading_bill.status == 'True' and not offer.bijak:
         return {'code': 'FMP08', 'text': 'بارگذاری بیجک', 'description': 'upload bijak'}
     
     if (not offer.order.border_passage and offer.load_info.bill_file) or offer.bijak.status:
@@ -199,5 +209,6 @@ def _producer_(offer, user):
 
     if offer.demurrage.receipt_status == 'True':
         return {'code': 'FMP12', 'description': 'you are done.'}
+
     elif offer.demurrage.receipt_status == 'False':
         return {'code': 'FMP13', 'description':'there is an issue with demurrage/inventory file please try uploading it again.'}
