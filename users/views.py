@@ -108,7 +108,7 @@ class LoginView(APIView):
         return Response(ObtainTokenSerializer({
             'refresh': str(refresh),
             'token': str(refresh.access_token),
-            'created': True,
+            'created': False,
             'user_role': user.role,
             'user_id': user.id,
             'company_name': user.company_name,
