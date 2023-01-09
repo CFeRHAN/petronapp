@@ -14,6 +14,7 @@ from django.contrib.auth import get_user_model
 
 from .serializers import *
 from users.models import OTP
+from utils.validator import mobile_validator
 
 
 
@@ -85,10 +86,8 @@ class LoginView(APIView):
         if '@' in request.data['username']:
             profile = User.objects.get(email=request.data['username'])
             mobile = profile.mobile
-        elif '0' in request.data['username'][:1]:
-            mobile = '98' + request.data['username'][1:]
         else:
-            mobile = request.data['username']
+            mobile = mobile_validator(request.data['username'])
 
         password = request.data['password']
         user = User.objects.get(mobile=mobile)
