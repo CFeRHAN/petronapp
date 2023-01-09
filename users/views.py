@@ -80,9 +80,14 @@ class RegisterView(APIView):
 
 class LoginView(APIView):
     def post(self, request):
-        mobile = request.data['mobile']
-        password = request.data['password']
 
+        if request.data['mobile']:
+            mobile = request.data['mobile']
+        else:
+            profile = User.objects.get(email=request.data['email'])
+            mobile = profile.mobile
+
+        password = request.data['password']
         user = User.objects.get(mobile=mobile)
         if user is None:
             raise AuthenticationFailed('user not found')

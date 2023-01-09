@@ -98,24 +98,25 @@ WSGI_APPLICATION = 'petronapp.wsgi.application'
 # }
 
 
+DATABASES = {
+   'default': {
+       'ENGINE': 'django.db.backends.postgresql',
+       'NAME': 'petronapp_db',
+       'USER': 'petronapp_backend',
+       'PASSWORD': 'petronappB@ck1401_6icwT58#U*',
+       'HOST': '45.139.10.161',
+       'PORT': '50432',
+   }
+}
+
+
 # DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.postgresql',
-#        'NAME': 'petronapp_db',
-#        'USER': 'petronapp_backend',
-#        'PASSWORD': 'petronappB@ck1401_6icwT58#U*',
-#        'HOST': '45.139.10.161',
-#        'PORT': '50432',
-#    }
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'testdb.sqlite3'),
+#     }
 # }
 
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'testdb.sqlite3'),
-    }
-}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators

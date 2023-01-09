@@ -97,6 +97,7 @@ def profile(request, pk, format = None):
                 data = {'password': password, 'recipient':user.mobile}
                 send_password(data)
                 freight.permission_file = serializer.validated_data['permission_file']
+                print('freight:::', freight.role)
                 freight.save()
 
 
