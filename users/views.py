@@ -81,11 +81,11 @@ class RegisterView(APIView):
 class LoginView(APIView):
     def post(self, request):
 
-        if request.data['mobile']:
-            mobile = request.data['mobile']
-        else:
-            profile = User.objects.get(email=request.data['email'])
+        if '@' in request.data['username']:
+            profile = User.objects.get(email=request.data['username'])
             mobile = profile.mobile
+        else:
+            mobile = request.data['username']
 
         password = request.data['password']
         user = User.objects.get(mobile=mobile)
