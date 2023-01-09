@@ -84,18 +84,19 @@ class LoginView(APIView):
     def post(self, request):
 
         if '@' in request.data['username']:
-            profile = User.objects.get(email=request.data['username'])
-            mobile = profile.mobile
+            profile = User.objects.filter(email=request.data['username'])
+            if profile.count() > 1:
+                Response({'message':'لطفا با موبایل وارد شوید'}, status=status.HTTP_400_BAD_REQUEST)
         else:
             mobile = mobile_validator(request.data['username'])
 
         password = request.data['password']
         user = User.objects.get(mobile=mobile)
         if user is None:
-            raise AuthenticationFailed('user not found')
+            return Response({'message':'user not found'}, status=status.HTTP_404_NOT_FOUND)
         
         if not user.check_password(password):
-            raise AuthenticationFailed('incorrect password')
+            return Response({'message':'incorrect password'}, status=status.HTTP_400_BAD_REQUEST)
         
         payload = {
             'id': user.id,
@@ -124,12 +125,15 @@ def update_password(request):
     user = request.user
     if user.role != '0':
         serializer = UpdatePasswordSerializer(data=request.data)
-        old_password = user.password
-        if old_password == user.set_password(serializer.validated_data['password']):
-            user.set_password(serializer.validated_data['new_password'])
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            return Response({'message': 'password does not match'})
+        if serializer.is_valid():
+            if user.check_password(serializer.validated_data['password']):
+                user.set_password(serializer.validated_data['new_password'])
+                user.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            else:
+                return Response({'message': 'password does not match'})
+    else:
+        return Response({'message':'user has no role'}, status=status.HTTP_401_UNAUTHORIZED)
         
 
 

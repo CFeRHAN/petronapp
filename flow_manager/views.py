@@ -57,9 +57,11 @@ def _trader_(offer, user):
     if not offer.lading_bill:
         return {'code': 'FMX00', 'text': 'در انتظار', 'description': 'waiting...'}
 
+    if not offer.lading_bill:
+        return {'code': 'FMX00', 'text': 'در انتظار', 'description': 'waiting...'}
+
     if offer.lading_bill.status == 'False':
         return {'code': 'FMT04', 'text': 'تایید بارنامه', 'description': 'confirm lading bill'}
-
 
     if offer.order.freight_completion_date:
         return {'code': 'FMT05', 'text': 'اعلام پایان سفارش', 'description': 'orderer done approval'}
@@ -68,18 +70,26 @@ def _trader_(offer, user):
         return {'code': 'FMT06', 'text': 'تایید قبض انبارداری', 'description': 'confirm inventory bill'}
     
     """here should be the second destination trigger"""
+    if not offer.inventory:
+        return {'code': 'FMX00', 'text': 'در انتظار', 'description': 'waiting...'}
 
     if offer.inventory.bill_status and offer.inventory.bill_file== 'False':
         return {'code': 'FMT07', 'text': 'تایید قبض انبارداری', 'description': 'confirm inventory bill'}
 
     if offer.inventory.bill_status == 'True' and not offer.inventory.receipt_file:
         return {'code': 'FMT08', 'text': 'بارگذاری رسید انبارداری', 'description': 'upload inventory receipt'}
+    
+    if not offer.demurrage:
+        return {'code': 'FMX00', 'text': 'در انتظار', 'description': 'waiting...'}
 
     if offer.demurrage.bill_file and offer.demurrage.bill_status == 'False':
         return {'code': 'FMT09', 'text': 'تایید قبض دموراژ', 'description': 'confirm demurrage bill'}
     
     if offer.demurrage.bill_status == 'True' and not offer.demurrage.receipt_file:
         return {'code': 'FMT10', 'text': 'بارگذاری رسید دموراژ', 'description': 'upload demurrage receipt'}
+
+    if not offer.final_payment:
+        return {'code': 'FMX00', 'text': 'در انتظار', 'description': 'waiting...'}
     
     if offer.final_payment.bill_file and offer.final_payment.bill_status == 'False':
         return {'code': 'FMT11', 'text': 'تایید قبض پرداخت نهایی', 'description': 'confirm final payment bill'}
@@ -94,10 +104,15 @@ def _freight_(offer, user):
     
     if offer.order_number_seen_status and not offer.drivers_info.bill_file:
         return {'code': 'FMF02', 'text': 'بارگذاری فایل معرفی رانندگان', 'description': 'upload drivers info'}
+
+    if not offer.drivers_info:
+        return {'code': 'FMX00', 'text': 'در انتظار', 'description': 'waiting...'}
     
-    if offer.drivers_info.status and not offer.inventory.bill_file:
+    if offer.drivers_info.status and not offer.inventory:
         return {'code': 'FMF03', 'text': 'بارگذاری فبض انبارداری', 'description': 'upload inventory bill'}
-    
+    if not offer.demurrage:
+        return {'code': 'FMX00', 'text': 'در انتظار', 'description': 'waiting...'}
+
     if offer.inventory.bill_status and not offer.demurrage.bill_status:
         return {'code': 'FMF04', 'text': 'تایید قبض دموراژ', 'description': 'confirm demurrage bill'}
     
@@ -107,15 +122,24 @@ def _freight_(offer, user):
     if offer.demurrage.bill_status and offer.prepayment_percentage:
         return {'code': 'FMF06', 'text': 'تایید قبض پیش پرداخت', 'description': 'confirm prepayment bill'}
     
+    if not offer.prepayment:
+        return {'code': 'FMX00', 'text': 'در انتظار', 'description': 'waiting...'}
+
     if offer.prepayment_percentage and not offer.prepayment.bill_status:
         return {'code': 'FMF07', 'text': 'بارگذاری رسید پیش پرداخت', 'description': 'upload prepayment receipt'}
+
+    if not offer.load_info:
+        return {'code': 'FMX00', 'text': 'در انتظار', 'description': 'waiting...'}
     
     if offer.prepayment.receipt_file and offer.load_info.status == 'False':
         return {'code': 'FMF08', 'text': 'مشاهده مشخصات بار', 'description': 'view load info'}
 
-    if offer.load_info.status and not offer.lading_bill.bill_file:
+    if offer.load_info.status and not offer.lading_bill:
         return {'code': 'FMF09', 'text': 'بارکذاری فایل بارنامه', 'description': 'upload lading bill'}
     
+    if not offer.bijak:
+        return {'code': 'FMX00', 'text': 'در انتظار', 'description': 'waiting...'}
+        
     if offer.order.border_passage and not offer.bijak.status:
         return {'code': 'FMF10', 'text': 'تایید بیجک', 'description': 'confirm bijak'}
     
