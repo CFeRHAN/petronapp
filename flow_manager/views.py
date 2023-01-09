@@ -54,8 +54,12 @@ def _trader_(offer, user):
         if offer.prepayment.receipt_status:
             return {'code': 'FMT03', 'text': 'تایید رسید پیش‌ پرداخت', 'description': 'confirm prepayment receipt'}
 
+    if not offer.lading_bill:
+        return {'code': 'FMX00', 'text': 'در انتظار', 'description': 'waiting...'}
+
     if offer.lading_bill.status == 'False':
         return {'code': 'FMT04', 'text': 'تایید بارنامه', 'description': 'confirm lading bill'}
+
 
     if offer.order.freight_completion_date:
         return {'code': 'FMT05', 'text': 'اعلام پایان سفارش', 'description': 'orderer done approval'}

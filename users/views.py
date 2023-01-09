@@ -102,9 +102,19 @@ class LoginView(APIView):
             'iat': datetime.datetime.utcnow()
         }
         
-        token = jwt.encode(payload, 'secret', algorithm='HS256')
+        refresh = RefreshToken.for_user(user)
 
-        return Response({'jwt': token})
+        return Response(ObtainTokenSerializer({
+            'refresh': str(refresh),
+            'token': str(refresh.access_token),
+            'created': True,
+            'user_role': user.role,
+            'user_id': user.id,
+            'company_name': user.company_name,
+            'profile_picture_file': user.profile_picture_file,
+
+        }).data, status=status.HTTP_200_OK)
+
 
 
 @swagger_auto_schema(methods=['POST'], request_body=UpdatePasswordSerializer)
