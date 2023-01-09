@@ -66,7 +66,7 @@ def profile(request, format=None):
                     mobile = mobile_validator(mobile)
                                             
                 serializer.validated_data['mobile'] = mobile
-                serializer.validated_data['agent_mobile'] = agent_mobile
+                serializer.validated_data['agent_phone'] = agent_mobile
                 serializer.save()
 
                 if 'password' not in serializer.validated_data:

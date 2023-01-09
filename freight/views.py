@@ -79,7 +79,7 @@ def profile(request, format=None):
     
                 serializer.validated_data['role'] = '2'
                 serializer.validated_data['mobile'] = mobile
-                serializer.validated_data['agent_mobile'] = agent_mobile
+                serializer.validated_data['agent_phone'] = agent_mobile
                 serializer.save()
 
                 if 'password' not in serializer.validated_data:

@@ -85,6 +85,8 @@ class LoginView(APIView):
         if '@' in request.data['username']:
             profile = User.objects.get(email=request.data['username'])
             mobile = profile.mobile
+        elif '0' in request.data['username'][:1]:
+            mobile = '98' + request.data['username'][1:]
         else:
             mobile = request.data['username']
 
