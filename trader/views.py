@@ -272,8 +272,8 @@ def offer_acception(request, order_pk, offer_pk, format=None):
 def approved_offers(request, format=None):
     """endpoint that returns a list of Producer's orders that have been approved"""
 
-    # user = request.user
-    user = User.objects.get(id=22)
+    user = request.user
+    # user = User.objects.get(id=22)
 
     if user.role == "0":
         return Response(status=status.HTTP_401_UNAUTHORIZED)

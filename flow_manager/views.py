@@ -36,7 +36,7 @@ def flow_manager(offer_pk, user):
         else:
             return {'message':'user permission denied'}
 
-            
+
     elif offer.order.contract_type == '3':
 
         if user.role == '1':
@@ -239,43 +239,43 @@ def _ffreight_(offer):
         return {'code': 'FMX00', 'text': 'در انتظار', 'description': 'waiting...'}
 
     if not offer.demurrage.bill_file:
-        return {'code': 'FMF02', 'text': 'بارگذاری قبض هزینه‌های دموراژ', 'description': 'upload demurrage bill'}
+        return {'code': 'FMF03', 'text': 'بارگذاری قبض هزینه‌های دموراژ', 'description': 'upload demurrage bill'}
 
     if not offer.inventory:
         return {'code': 'FMX00', 'text': 'در انتظار', 'description': 'waiting...'}
     
     if not offer.inventory.bill_status:
-        return {'code': 'FMF02', 'text': 'تایید قبض هزینه‌های انبارداری', 'description': 'confirm inventory bill'}
+        return {'code': 'FMF04', 'text': 'تایید قبض هزینه‌های انبارداری', 'description': 'confirm inventory bill'}
 
     if not offer.lading_bill:
-        return {'code': 'FMF02', 'text': 'بارگذاری فایل بارنامه', 'description': 'upload lading bill'}
+        return {'code': 'FMF05', 'text': 'بارگذاری فایل بارنامه', 'description': 'upload lading bill'}
     
     if not offer.bijak:
         return {'code': 'FMX00', 'text': 'در انتظار', 'description': 'waiting...'}
 
     if not offer.bijak.bill_status:
-        return {'code': 'FMF02', 'text': 'تایید بیجک', 'description': 'confirm bijak'}
+        return {'code': 'FMF06', 'text': 'تایید بیجک', 'description': 'confirm bijak'}
     
     if not offer.order.freight_completion_date and not offer.order.second_destination:
-        return {'code': 'FMF02', 'text': 'اعلان پایان فرایند توسط حمل و نقل', 'description': 'freight done approval'}
+        return {'code': 'FMF07', 'text': 'اعلان پایان فرایند توسط حمل و نقل', 'description': 'freight done approval'}
     
     if offer.order.second_destination and not offer.second_destination_cost:
-        return {'code': 'FMF02', 'text': 'بارگذاری فایل هزینه‌های حمل تا مقصد دوم', 'description': 'upload second destination costs'}
+        return {'code': 'FMF08', 'text': 'بارگذاری فایل هزینه‌های حمل تا مقصد دوم', 'description': 'upload second destination costs'}
 
     if offer.second_destination_cost and not offer.inventory.receipt_file:
-        return {'code': 'FMF02', 'text': '', 'description': 'upload inventory receipt'}
+        return {'code': 'FMF09', 'text': '', 'description': 'upload inventory receipt'}
 
     if not offer.inventory.receipt_status:
-        return {'code': 'FMF02', 'text': 'در انتظار تایید رسید هزینه های انبار داری', 'description': 'wait for inventory confirmation or upload inventory receipt again'}
+        return {'code': 'FMF10', 'text': 'در انتظار تایید رسید هزینه های انبار داری', 'description': 'wait for inventory confirmation or upload inventory receipt again'}
     
     if offer.inventory.receipt_status:
-        return {'code': 'FMF02', 'text': 'تایید رسید تسویه نهایی', 'description': 'confirm payment receipt'}
+        return {'code': 'FMF11', 'text': 'تایید رسید تسویه نهایی', 'description': 'confirm payment receipt'}
 
 
 
 def _pproducer_(offer):
     if not offer.order_number_file:
-        return {'code': 'FMT01', 'text': 'ارسال شماره سفارش', 'description': 'send order number to frieght'}
+        return {'code': 'FMP01', 'text': 'ارسال شماره سفارش', 'description': 'send order number to frieght'}
 
     if not offer.driver_info:
         return {'code': 'FMX00', 'text': 'در انتظار', 'description': 'waiting...'}
@@ -294,34 +294,34 @@ def _pproducer_(offer):
     
     if offer.prepayment:
         if not offer.prepayment.bill_file:
-            return {'code': 'FMT02', 'text': 'بارگذاری رسید پیش پرداخت', 'description': 'upload prepayment bill'}
+            return {'code': 'FMP05', 'text': 'بارگذاری رسید پیش پرداخت', 'description': 'upload prepayment bill'}
         
         if offer.prepayment.receipt_status:
-            return {'code': 'FMT03', 'text': 'تایید رسید پیش‌ پرداخت', 'description': 'confirm prepayment receipt'}
+            return {'code': 'FMP06', 'text': 'تایید رسید پیش‌ پرداخت', 'description': 'confirm prepayment receipt'}
     
     if not offer.load_info:
-        return {'code': 'FMT03', 'text': 'بارگذاری فایل مشخصات بار', 'description': 'upload load info'}
+        return {'code': 'FMP07', 'text': 'بارگذاری فایل مشخصات بار', 'description': 'upload load info'}
 
     if not offer.invoice_packing:
-        return {'code': 'FMT03', 'text': 'آپلود فایل فاکتور بسته بندی', 'description': 'upload invoice packing'}
+        return {'code': 'FMP08', 'text': 'آپلود فایل فاکتور بسته بندی', 'description': 'upload invoice packing'}
 
     if not offer.lading_bill:
         return {'code': 'FMX00', 'text': 'در انتظار', 'description': 'waiting...'}
 
     if offer.lading_bill.status == 'False':
-        return {'code': 'FMT03', 'text': 'تایید بارنامه', 'description': 'confirm lading bill'}
+        return {'code': 'FMP09', 'text': 'تایید بارنامه', 'description': 'confirm lading bill'}
 
     if not offer.bijak:
-        return {'code': 'FMT03', 'text': 'بارگذاری فایل بیجک', 'description': 'upload bijak'}
+        return {'code': 'FMP10', 'text': 'بارگذاری فایل بیجک', 'description': 'upload bijak'}
 
     if offer.bijak.status == 'True':
-        return {'code': 'FMT03', 'text': 'اعلان اتمام پروسه یا تعیین مقصد دوم', 'description': 'orderer done approval/define second destination'}
+        return {'code': 'FMP11', 'text': 'اعلان اتمام پروسه یا تعیین مقصد دوم', 'description': 'orderer done approval/define second destination'}
 
     if offer.order.orderer_completion_date and not offer.demurrage.receipt_file:
-        return {'code': 'FMT03', 'text': 'بارگذاری رسید پرداخت هزینه‌های دموراژ', 'description': 'upload demurrage receipt'}
+        return {'code': 'FMP12', 'text': 'بارگذاری رسید پرداخت هزینه‌های دموراژ', 'description': 'upload demurrage receipt'}
 
     if offer.demurrage.receipt_status:
-        return {'code': 'FMT03', 'text': 'بارگذاری فایل تسویه نهایی', 'description': 'upload payment receipt'}
+        return {'code': 'FMP13', 'text': 'بارگذاری فایل تسویه نهایی', 'description': 'upload payment receipt'}
 
 
 
