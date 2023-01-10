@@ -269,3 +269,6 @@ def _ffreight_(offer, user):
     if offer.inventory.receipt_status:
         return {'code': 'FMF02', 'text': 'تایید رسید تسویه نهایی', 'description': 'confirm payment receipt'}
 
+
+
+
