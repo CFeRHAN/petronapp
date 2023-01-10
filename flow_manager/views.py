@@ -25,26 +25,28 @@ def flow_manager(offer_pk, user):
     if offer.order.contract_type == '2':
 
         if user.role == '1':
-            return _trader_(offer, user)
+            return _trader_(offer)
 
         if user.role == '2':
-            return _freight_(offer, user)
+            return _freight_(offer)
         
         if user.role == '3':
-            return _producer_(offer, user)
+            return _producer_(offer)
 
         else:
             return {'message':'user permission denied'}
+
+            
     elif offer.order.contract_type == '3':
 
         if user.role == '1':
             return Response({'message': 'you have nothing to do here'})
         
         if user.role == '2':
-            return _ffreight_(offer, user)
+            return _ffreight_(offer)
 
         if user.role == '3':
-            pass
+            return _pproducer_(offer)
 
         else:
             return {'message':'user permission denied'}
@@ -52,7 +54,7 @@ def flow_manager(offer_pk, user):
     return {'message':'Contract Type is not supported'}
 
 
-def _trader_(offer, user):
+def _trader_(offer):
     if not offer.order_number_file:
         return {'code': 'FMT01', 'text': 'ارسال شماره سفارش', 'description': 'send order number to frieght'}
     
@@ -104,7 +106,7 @@ def _trader_(offer, user):
         return {'code': 'FMT12', 'text': 'بارگذاری رسید پرداخت نهایی', 'description': 'upload final payment receipt'}
 
 
-def _freight_(offer, user):
+def _freight_(offer):
     if offer.order_number_file and not offer.order_number_seen_status:
         return {'code': 'FMF01', 'text': 'مشاهده شماره سفارش', 'description': 'view order number'}
     
@@ -169,7 +171,7 @@ def _freight_(offer, user):
         return {'description': 'you are done.'}
 
 
-def _producer_(offer, user):
+def _producer_(offer):
 
     if offer.freight_acception == 'True' and not offer.order.order_number:
         return {'code': 'FMP01', 'text': 'بارگذاری فایل شماره سفارش', 'description': 'upload order number'}
@@ -226,7 +228,7 @@ def _producer_(offer, user):
 ##__________________________________________________##
 
 
-def _ffreight_(offer, user):
+def _ffreight_(offer):
     if offer.order_number_file and not offer.order_number_seen_status:
         return {'code': 'FMF01', 'text': 'مشاهده شماره سفارش', 'description': 'view order number'}
 
@@ -269,6 +271,57 @@ def _ffreight_(offer, user):
     if offer.inventory.receipt_status:
         return {'code': 'FMF02', 'text': 'تایید رسید تسویه نهایی', 'description': 'confirm payment receipt'}
 
+
+
+def _pproducer_(offer):
+    if not offer.order_number_file:
+        return {'code': 'FMT01', 'text': 'ارسال شماره سفارش', 'description': 'send order number to frieght'}
+
+    if not offer.driver_info:
+        return {'code': 'FMX00', 'text': 'در انتظار', 'description': 'waiting...'}
+
+    if offer.drivers_info.status == 'False':
+        return {'code': 'FMP02', 'text': 'مشاهده اطلاعات رانندگان', 'description': 'view drivers info'}
+
+    if offer.drivers_info.status == 'True' and not offer.inventory:
+        return {'code': 'FMP03', 'text': 'بارگذاری قبض هزینه‌های انبارداری', 'description': 'upload inventory bill'}
+
+    if not offer.demurrage:
+        return {'code': 'FMX00', 'text': 'در انتظار', 'description': 'waiting...'}
+
+    if offer.inventory.bill_file and offer.demurrage.bill_status == 'False':
+        return {'code': 'FMP04', 'text': 'تایید قبض هزینه‌های دموراژ', 'description': 'confirm demurrage bill'}
+    
+    if offer.prepayment:
+        if not offer.prepayment.bill_file:
+            return {'code': 'FMT02', 'text': 'بارگذاری رسید پیش پرداخت', 'description': 'upload prepayment bill'}
+        
+        if offer.prepayment.receipt_status:
+            return {'code': 'FMT03', 'text': 'تایید رسید پیش‌ پرداخت', 'description': 'confirm prepayment receipt'}
+    
+    if not offer.load_info:
+        return {'code': 'FMT03', 'text': 'بارگذاری فایل مشخصات بار', 'description': 'upload load info'}
+
+    if not offer.invoice_packing:
+        return {'code': 'FMT03', 'text': 'آپلود فایل فاکتور بسته بندی', 'description': 'upload invoice packing'}
+
+    if not offer.lading_bill:
+        return {'code': 'FMX00', 'text': 'در انتظار', 'description': 'waiting...'}
+
+    if offer.lading_bill.status == 'False':
+        return {'code': 'FMT03', 'text': 'تایید بارنامه', 'description': 'confirm lading bill'}
+
+    if not offer.bijak:
+        return {'code': 'FMT03', 'text': 'بارگذاری فایل بیجک', 'description': 'upload bijak'}
+
+    if offer.bijak.status == 'True':
+        return {'code': 'FMT03', 'text': 'اعلان اتمام پروسه یا تعیین مقصد دوم', 'description': 'orderer done approval/define second destination'}
+
+    if offer.order.orderer_completion_date and not offer.demurrage.receipt_file:
+        return {'code': 'FMT03', 'text': 'بارگذاری رسید پرداخت هزینه‌های دموراژ', 'description': 'upload demurrage receipt'}
+
+    if offer.demurrage.receipt_status:
+        return {'code': 'FMT03', 'text': 'بارگذاری فایل تسویه نهایی', 'description': 'upload payment receipt'}
 
 
 
