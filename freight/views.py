@@ -37,7 +37,6 @@ def profile(request, format=None):
     if request.method == 'GET':
         user = Freight.objects.get(mobile=mobile)
         serializer = CreateFreightProfileSerializer(user)
-        print(serializer)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     elif request.method == 'POST':
@@ -47,7 +46,6 @@ def profile(request, format=None):
         if user.role == "0":
             serializer = CreateFreightProfileSerializer(freight, data=request.data)
             if serializer.is_valid():
-                print('permission: ', serializer.validated_data['permission_file'])
                 
                 if key_existance(serializer.validated_data, 'profile_picture_file'):
                     if not serializer.validated_data['profile_picture_file'] == '-':

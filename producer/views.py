@@ -111,8 +111,6 @@ def orders(request, format=None):
     producer = User.objects.get(pk=user.id)
 
     if request.method == 'GET':
-        print(user)
-        print(f'this is role:::',user.role)
         
         if user.role == "0":
             return Response(status=status.HTTP_401_UNAUTHORIZED)
@@ -165,8 +163,6 @@ def recieved_orders(request, format=None):
     producer = User.objects.get(pk=user.id)
 
     if request.method == 'GET':
-        print(user.role)
-        print(producer)
         if user.role == "0":
             return Response(status=status.HTTP_401_UNAUTHORIZED)
         elif user.role == "3":
@@ -208,7 +204,6 @@ def offers(request, order_pk, format=None):
     elif user.role == "3":
         offers = Offer.objects.filter(order=order_pk)
         serializer = OfferSerializer(offers, many=True)
-        print(serializer)
         return Response(serializer.data, status=status.HTTP_200_OK)
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -370,7 +365,6 @@ def upload_invetory_bill(request, order_pk, offer_pk, format=None):
         
         if serializer.is_valid():
             serializer.save()
-            print(serializer.data)
             return Response(serializer.data, status=status.HTTP_200_OK)
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST)

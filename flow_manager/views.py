@@ -40,7 +40,7 @@ def flow_manager(offer_pk, user):
     elif offer.order.contract_type == '3':
 
         if user.role == '1':
-            return Response({'message': 'you have nothing to do here'})
+            return ({'message': 'you have nothing to do here'})
         
         if user.role == '2':
             return _ffreight_(offer)

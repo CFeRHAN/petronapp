@@ -94,7 +94,6 @@ def profile(request, format=None):
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
-            print(user.role, user.id)
             return Response({'message':'you already have a profile'}, status=status.HTTP_400_BAD_REQUEST)
     else:
         return Response({'message':'there is something wrong'}, status=status.HTTP_400_BAD_REQUEST)

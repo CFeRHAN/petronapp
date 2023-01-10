@@ -361,7 +361,6 @@ class OfferCountSerializer(serializers.ModelSerializer):
         order = Offer.get_order()
         qs = Offer.objects.filter(order=order)
         number = qs.count()
-        print(number)
-        return 
+        return number
 
 
