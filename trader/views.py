@@ -283,7 +283,7 @@ def approved_offers(request, format=None):
         approved_offers = []
         for id in offer_id:
             flow = flow_manager(id, user)
-            offer = offer.objects.get(id=id)
+            offer = Offer.objects.get(id=id)
             approved_offers.append({'offer':OfferSerializer(offer).data, 'flow':flow})
         
         return Response(approved_offers, status=status.HTTP_200_OK)

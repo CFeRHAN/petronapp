@@ -291,7 +291,7 @@ def approved_offers(request, format=None):
             offer = Offer.objects.get(id=id)
             approved_offers.append({'offer':OfferSerializer(offer).data, 'flow':flow})
             
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(approved_offers, status=status.HTTP_200_OK)
 
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST)

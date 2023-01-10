@@ -151,10 +151,8 @@ def accepted_offers(request, format=None):
             offer = Offer.objects.get(id=id)
             accepted_offers.append({'offer':OfferSerializer(offer).data, 'flow':flow})
 
-        serializer = OfferSerializer(offers, many=True)
         return Response(accepted_offers , status=status.HTTP_200_OK)
     else:
-        print(user.role)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 

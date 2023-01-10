@@ -23,6 +23,7 @@ def flow_manager(offer_pk, user):
 
 
     if offer.order.contract_type == '0':
+
         if user.role == '1':
             return _trader_(offer, user)
 
@@ -34,7 +35,19 @@ def flow_manager(offer_pk, user):
 
         else:
             return {'message':'user permission denied'}
-    
+    elif offer.order.contract_type == '1':
+
+        if user.role == '1':
+            pass
+        
+        if user.role == '2':
+            pass
+
+        if user.role == '3':
+            pass
+
+        else:
+            return {'message':'user permission denied'}
     return {'message':'Contract Type is not supported'}
 
 
