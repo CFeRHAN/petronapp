@@ -22,7 +22,7 @@ def flow_manager(offer_pk, user):
         return Response({'message': f'offer {offer_pk} not found'})
 
 
-    if offer.order.contract_type == '0':
+    if offer.order.contract_type == '2':
 
         if user.role == '1':
             return _trader_(offer, user)
@@ -35,19 +35,20 @@ def flow_manager(offer_pk, user):
 
         else:
             return {'message':'user permission denied'}
-    elif offer.order.contract_type == '1':
+    elif offer.order.contract_type == '3':
 
         if user.role == '1':
-            pass
+            return Response({'message': 'you have nothing to do here'})
         
         if user.role == '2':
-            pass
+            return _ffreight_(offer, user)
 
         if user.role == '3':
             pass
 
         else:
             return {'message':'user permission denied'}
+
     return {'message':'Contract Type is not supported'}
 
 
@@ -107,14 +108,15 @@ def _freight_(offer, user):
     if offer.order_number_file and not offer.order_number_seen_status:
         return {'code': 'FMF01', 'text': 'مشاهده شماره سفارش', 'description': 'view order number'}
     
-    if offer.order_number_seen_status and not offer.drivers_info.bill_file:
+    if offer.order_number_seen_status and not offer.drivers_info:
         return {'code': 'FMF02', 'text': 'بارگذاری فایل معرفی رانندگان', 'description': 'upload drivers info'}
 
-    if not offer.drivers_info:
+    if not offer.inventory:
         return {'code': 'FMX00', 'text': 'در انتظار', 'description': 'waiting...'}
     
-    if offer.drivers_info.status and not offer.inventory:
-        return {'code': 'FMF03', 'text': 'بارگذاری فبض انبارداری', 'description': 'upload inventory bill'}
+    if offer.drivers_info.status and not offer.inventory.bill_status:
+        return {'code': 'FMF03', 'text': 'تایید فبض انبارداری', 'description': 'upload inventory bill'}
+    
     if not offer.demurrage:
         return {'code': 'FMX00', 'text': 'در انتظار', 'description': 'waiting...'}
 
@@ -217,3 +219,53 @@ def _producer_(offer, user):
 
     elif offer.demurrage.receipt_status == 'False':
         return {'code': 'FMP13', 'description':'there is an issue with demurrage/inventory file please try uploading it again.'}
+
+
+##__________________________________________________##
+##_____________________ CPT ________________________##
+##__________________________________________________##
+
+
+def _ffreight_(offer, user):
+    if offer.order_number_file and not offer.order_number_seen_status:
+        return {'code': 'FMF01', 'text': 'مشاهده شماره سفارش', 'description': 'view order number'}
+
+    if offer.order_number_seen_status and not offer.drivers_info:
+        return {'code': 'FMF02', 'text': 'بارگذاری فایل معرفی رانندگان', 'description': 'upload drivers info'}
+
+    if not offer.demurrage:
+        return {'code': 'FMX00', 'text': 'در انتظار', 'description': 'waiting...'}
+
+    if not offer.demurrage.bill_file:
+        return {'code': 'FMF02', 'text': 'بارگذاری قبض هزینه‌های دموراژ', 'description': 'upload demurrage bill'}
+
+    if not offer.inventory:
+        return {'code': 'FMX00', 'text': 'در انتظار', 'description': 'waiting...'}
+    
+    if not offer.inventory.bill_status:
+        return {'code': 'FMF02', 'text': 'تایید قبض هزینه‌های انبارداری', 'description': 'confirm inventory bill'}
+
+    if not offer.lading_bill:
+        return {'code': 'FMF02', 'text': 'بارگذاری فایل بارنامه', 'description': 'upload lading bill'}
+    
+    if not offer.bijak:
+        return {'code': 'FMX00', 'text': 'در انتظار', 'description': 'waiting...'}
+
+    if not offer.bijak.bill_status:
+        return {'code': 'FMF02', 'text': 'تایید بیجک', 'description': 'confirm bijak'}
+    
+    if not offer.order.freight_completion_date and not offer.order.second_destination:
+        return {'code': 'FMF02', 'text': 'اعلان پایان فرایند توسط حمل و نقل', 'description': 'freight done approval'}
+    
+    if offer.order.second_destination and not offer.second_destination_cost:
+        return {'code': 'FMF02', 'text': 'بارگذاری فایل هزینه‌های حمل تا مقصد دوم', 'description': 'upload second destination costs'}
+
+    if offer.second_destination_cost and not offer.inventory.receipt_file:
+        return {'code': 'FMF02', 'text': '', 'description': 'upload inventory receipt'}
+
+    if not offer.inventory.receipt_status:
+        return {'code': 'FMF02', 'text': 'در انتظار تایید رسید هزینه های انبار داری', 'description': 'wait for inventory confirmation or upload inventory receipt again'}
+    
+    if offer.inventory.receipt_status:
+        return {'code': 'FMF02', 'text': 'تایید رسید تسویه نهایی', 'description': 'confirm payment receipt'}
+

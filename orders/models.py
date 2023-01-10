@@ -40,8 +40,9 @@ class Order(models.Model):
     """Model for the Order submitted by Trader or Petro in which we name it orderer."""
 
     TYPE_CHOICES = [
-        ('0', 'FCA'),
-        ('1', 'CPT'),
+        ('1', 'INTERNAL'),
+        ('2', 'FCA'),
+        ('3', 'CPT'),
     ]
 
     orderer = models.ForeignKey(User, on_delete=models.CASCADE, related_name="orderer")
