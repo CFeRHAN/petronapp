@@ -14,7 +14,7 @@ class Payment(models.Model):
     bill_file = models.CharField(max_length=35, blank=True, null=True)
     receipt_file = models.CharField(max_length=35, blank=True, null=True)
     price = models.FloatField(blank=False)
-    payment_date = models.DateField(null=False, blank=False)
+    payment_date = models.DateField(blank=True, null=True)
     bill_status = models.BooleanField(default=False)
     bill_rejection_reasons = models.TextField(blank=True)
     receipt_status = models.BooleanField(default=False)

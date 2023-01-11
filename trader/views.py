@@ -272,7 +272,6 @@ def approved_offers(request, format=None):
     """endpoint that returns a list of Producer's orders that have been approved"""
 
     user = request.user
-    # user = User.objects.get(id=22)
 
     if user.role == "0":
         return Response(status=status.HTTP_401_UNAUTHORIZED)
@@ -306,7 +305,7 @@ def view_deal_draft(request, order_pk, offer_pk, format=None):
         return Response(status=status.HTTP_401_UNAUTHORIZED)
     
     elif user.role == "1":
-        x = offer.deal_draft
+        x = offer.deal_draft.id
         draft = PaperWork.objects.get(pk=x)
         serializer = ViewDealDraftSerializer(draft)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -333,11 +332,15 @@ def send_order_number(request, order_pk, offer_pk):
     elif user.role == "1":
         order = Order.objects.get(pk=order_pk)
 
-        order_number = order.order_number_file
-        offer.order_number_file = order_number
+        order_number_file = order.order_number_file
+        order_number = order.order_number
+
+        offer.order_number = order_number
+        offer.order_number_file = order_number_file
+
         offer.save()
 
-        serializer = ViewOrderNumberSerializer(offer, data=request.data)
+        serializer = ViewOrderNumberSerializer(offer)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
     
@@ -360,16 +363,26 @@ def upload_prepayment_bill(request, order_pk, offer_pk, format=None):
         return Response(status=status.HTTP_401_UNAUTHORIZED)
 
     elif user.role == "1":
-        x = offer.prepayment
-        prepayment = Payment.objects.get(pk=x)
-        serializer = UploadPrepaymentBillSerializer(prepayment, data=request.data)
+
+        serializer = UploadPrepaymentBillSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            
+            bill_file = serializer.validated_data['bill_file']
+            price = serializer.validated_data['price']
+
+            prepayment = Payment(price = price, bill_file=bill_file)
+            prepayment.save()
+            offer.prepayment = prepayment
+            offer.save()
+            print(offer.prepayment)
+
             return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST)
+        
 
 @swagger_auto_schema(methods=['PUT'], request_body=ConfirmPrepaymentReceiptSerializer)
 @api_view(['PUT'])
@@ -387,17 +400,14 @@ def confirm_prepayment_receipt(request, order_pk, offer_pk, format=None):
         return Response(status=status.HTTP_401_UNAUTHORIZED)
     
     elif user.role == "1":
-        x = offer.prepayment
-        receipt = Payment.objects.get(pk=x)
-        serializer = ConfirmPrepaymentReceiptSerializer(receipt, data=request.data)
+
+        prepayment = offer.prepayment
+        serializer = ConfirmPrepaymentReceiptSerializer(prepayment, data=request.data)
         if serializer.is_valid():
-            if serializer.validated_data['receipt_status'] == False:
-                x = offer.prepayment
-                prepayment_receipt = Payment.objects.get(pk=x)
-                prepayment_receipt.delete()
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST)
