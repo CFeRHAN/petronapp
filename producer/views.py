@@ -344,8 +344,8 @@ def view_drivers_info(request, order_pk, offer_pk, format=None):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-@swagger_auto_schema(methods=['PUT'], request_body=UploadInventoryBillSerializer)
-@api_view(['PUT'])
+@swagger_auto_schema(methods=['POST'], request_body=UploadInventoryBillSerializer)
+@api_view(['POST'])
 def upload_invetory_bill(request, order_pk, offer_pk, format=None):
     """endpoint that allows Producer to view drivers info"""
 
@@ -359,13 +359,18 @@ def upload_invetory_bill(request, order_pk, offer_pk, format=None):
     if user.role == "0":
         return Response(status=status.HTTP_401_UNAUTHORIZED)
     elif user.role == "3":
-        x = offer.inventory
-        inventory = Payment.objects.get(pk=x)
-        serializer = UploadInventoryBillSerializer(offer, data=request.data)
-        
+
+        serializer = UploadInventoryBillSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            bill_file = serializer.validated_data['bill_file']
+            price = serializer.validated_data['price']
+            inventory = Payment(bill_file=bill_file, price=price)
+            inventory.save()
+            offer.inventory = inventory
+            offer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
@@ -601,8 +606,8 @@ def upload_demurrage_receipt(request, order_pk, offer_pk, format=None):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-@swagger_auto_schema(methods=['PUT'], request_body=UploadBijakBillSerializer)
-@api_view(['PUT'])
+@swagger_auto_schema(methods=['POST'], request_body=UploadBijakBillSerializer)
+@api_view(['POST'])
 def upload_bijak(request, order_pk, offer_pk, format=None):
     """endpoint that allows Producer to upload a bijak"""
 
@@ -617,13 +622,17 @@ def upload_bijak(request, order_pk, offer_pk, format=None):
         return Response(status=status.HTTP_401_UNAUTHORIZED)
     
     elif user.role == "3":
-        x = offer.bijak
-        bijak = PaperWork.objects.get(pk=x)
-        serializer = UploadBijakBillSerializer(bijak, data=request.data)
+
+        serializer = UploadBijakBillSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+            print(serializer.validated_data)
+            bill_file = serializer.validated_data['bill_file']
+            bijak = PaperWork(bill_file=bill_file)
+            bijak.save()
+            offer.bijak = bijak
+            offer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -707,6 +716,39 @@ def order_completion_approval(request, order_pk, offer_pk, format=None):
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
+
+@swagger_auto_schema(methods=['POST'], request_body=UploadFinalPaymentReceipt)
+@api_view(['POST'])
+def upload_final_payment_receipt(request, order_pk, offer_pk, format=None):
+    """endpoint that allows the Trader to upload the Final Payment Receipt"""
+
+    user = request.user
+
+    try:
+        offer = Offer.objects.get(pk=offer_pk, order=order_pk)
+    except Offer.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if user.role == "0":
+        return Response(status=status.HTTP_401_UNAUTHORIZED)
+    
+    elif user.role == "3":
+        serializer = UploadFinalPaymentReceipt(data=request.data)
+
+        if serializer.is_valid():
+
+            receipt_file = serializer.validated_data['receipt_file']
+            final_payment = Payment(receipt_file=receipt_file)
+            final_payment.save()
+            offer.final_payment = final_payment
+            offer.save()
+
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+    
+    else:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET'])

@@ -29,6 +29,8 @@ urlpatterns = [
     path('orders/<int:order_pk>/offers/<int:offer_pk>/second_destination/', define_second_destination, name='define_second_destination'),
     path('orders/<int:order_pk>/offers/<int:offer_pk>/second_destination_bill/', confirm_second_destination_bill, name='confirm_second_destination_bill'),
     path('orders/<int:order_pk>/offers/<int:offer_pk>/completion_approval/', order_completion_approval, name='order_completion_approval'),
+    path('orders/<int:order_pk>/offers/<int:offer_pk>/final_payment_receipt/', upload_final_payment_receipt, name='upload_final_payment_receipt'),
+
 
     path('', view_all_producers, name='get_all_producers'),
 ]

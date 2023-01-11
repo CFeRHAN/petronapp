@@ -116,7 +116,7 @@ class ViewDriversInfoSerializer(serializers.ModelSerializer):
 class UploadInventoryBillSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
-        exclude = ['receipt_file', 'receipt_status', 'bill_rejection_reasons']
+        fields = ['bill_file', 'price']
 
 
 class ViewDemurrageBillSerializer(serializers.ModelSerializer):
@@ -295,7 +295,7 @@ class ConfirmBijakBillSerializer(serializers.ModelSerializer):
 class UploadSecondDestinationBillSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
-        fields = ['bill_file']
+        fields = ['bill_file', 'price']
 
 
 class ConfirmFinalPaymentReceiptSerializer(serializers.ModelSerializer):

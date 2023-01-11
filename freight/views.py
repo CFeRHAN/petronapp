@@ -613,12 +613,9 @@ def confirm_demurrage_receipt(request, order_pk, offer_pk, format=None):
         return Response(status=status.HTTP_401_UNAUTHORIZED)
     
     elif user.role == "2":
-        serializer = ConfirmDemurrageReceiptSerializer(offer, data=request.data)
+        demurrage = offer.demurrage
+        serializer = ConfirmDemurrageReceiptSerializer(demurrage, data=request.data)
         if serializer.is_valid():
-            if serializer.validated_data['receipt_status'] == False:
-                x = offer.demurrage
-                demurrage_receipt = Payment.objects.get(pk=x)
-                demurrage_receipt.delete()
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -643,12 +640,9 @@ def confirm_bijak_bill(request, order_pk, offer_pk, format=None):
         return Response(status=status.HTTP_401_UNAUTHORIZED)
     
     elif user.role == "2":
-        serializer = ConfirmBijakBillSerializer(offer, data=request.data)
+        bijak = offer.bijak
+        serializer = ConfirmBijakBillSerializer(bijak, data=request.data)
         if serializer.is_valid():
-            if serializer.validated_data['status'] == False:
-                x = offer.bijak
-                bijak_bill = PaperWork.objects.get(pk=x)
-                bijak_bill.delete()
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
     
@@ -671,17 +665,17 @@ def order_completion_approval(request, order_pk, offer_pk, format=None):
         return Response(status=status.HTTP_401_UNAUTHORIZED)
     
     elif user.role == "2":
-        order = Order.objects.get(pk=order_pk)
+        order = offer.order
         order.freight_completion_date=timezone.datetime.now()
         order.save()
-        return Response({'success':'True'}, status=status.HTTP_200_OK)
+        return Response({'success':'Order Completion Approved'}, status=status.HTTP_200_OK)
     
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-@swagger_auto_schema(methods=['PUT'], request_body=UploadSecondDestinationBillSerializer)
-@api_view(['PUT'])
+@swagger_auto_schema(methods=['POST'], request_body=UploadSecondDestinationBillSerializer)
+@api_view(['POST'])
 def upload_second_destination_cost(request, order_pk, offer_pk, format=None):
     """endpoint that allows Freight company to upload Second Destination Bill"""
 
@@ -696,9 +690,16 @@ def upload_second_destination_cost(request, order_pk, offer_pk, format=None):
         return Response(status=status.HTTP_401_UNAUTHORIZED)
     
     elif user.role == "2":
-        serializer = UploadSecondDestinationBillSerializer(offer, data=request.data)
+        serializer = UploadSecondDestinationBillSerializer(data=request.data)
+
         if serializer.is_valid():
-            serializer.save()
+            bill_file = serializer.validated_data['bill_file']
+            price = serializer.validated_data['price']
+
+            cost = Payment(bill_file=bill_file, price=price)
+            cost.save()
+            offer.second_destination_cost = cost
+            offer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
@@ -722,13 +723,9 @@ def confirm_final_payment_receipt(request, order_pk, offer_pk, format=None):
         return Response(status=status.HTTP_401_UNAUTHORIZED)
     
     elif user.role == "2":
-        serializer = ConfirmFinalPaymentReceiptSerializer(offer, data=request.data)
+        final_payment = offer.final_payment
+        serializer = ConfirmFinalPaymentReceiptSerializer(final_payment, data=request.data)
         if serializer.is_valid():
-            if serializer.validated_data['receipt_status'] == False:
-
-                x = offer.final_payment
-                final_payment = Payment.objects.get(pk=x)
-                final_payment.delete()
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

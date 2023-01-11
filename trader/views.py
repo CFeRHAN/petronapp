@@ -665,8 +665,8 @@ def upload_second_destination_cost_receipt(request, order_pk, offer_pk, format=N
     
 
 
-@swagger_auto_schema(methods=['PUT'], request_body=UploadFinalPaymentReceipt)
-@api_view(['PUT'])
+@swagger_auto_schema(methods=['POST'], request_body=UploadFinalPaymentReceipt)
+@api_view(['POST'])
 def upload_final_payment_receipt(request, order_pk, offer_pk, format=None):
     """endpoint that allows the Trader to upload the Final Payment Receipt"""
 
@@ -681,11 +681,15 @@ def upload_final_payment_receipt(request, order_pk, offer_pk, format=None):
         return Response(status=status.HTTP_401_UNAUTHORIZED)
     
     elif user.role == "1":
-        x = offer.final_payment
-        final_payment = Payment.objects.get(pk=x)
-        serializer = UploadFinalPaymentReceipt(final_payment, data=request.data)
+        serializer = UploadFinalPaymentReceipt(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            
+            receipt_file = serializer.validated_data['receipt_file']
+            final_payment = Payment(receipt_file)
+            final_payment.save()
+            offer.final_payment = final_payment
+            offer.save()
+
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(status=status.HTTP_400_BAD_REQUEST)
     
