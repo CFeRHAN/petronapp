@@ -161,7 +161,7 @@ class UploadInvoicePackingBillSerializer(serializers.ModelSerializer):
 class ConfirmLadingBillSerializer(serializers.ModelSerializer):
     class Meta:
         model = PaperWork
-        fields = ['status','rejection_reasons']
+        fields = ['bill_file', 'status','rejection_reasons']
         read_only_fields = ['bill_file']
 
 
@@ -175,7 +175,7 @@ class ConfirmInventoryReceiptSerializer(serializers.ModelSerializer):
 class UploadDemurrageReceiptSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
-        fields = ['receipt_file']
+        fields = ['bill_file', 'receipt_file']
         read_only_fields = ['bill_file']
 
 

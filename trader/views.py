@@ -31,8 +31,6 @@ def profile(request, format=None):
 
     user = request.user
     mobile = user.mobile
-    
-
 
     if request.method == 'GET':
         user = Trader.objects.get(mobile=mobile)
@@ -429,12 +427,11 @@ def confirm_lading_bill(request, order_pk, offer_pk, format=None):
         return Response(status=status.HTTP_401_UNAUTHORIZED)
 
     elif user.role == "1":
-        x = offer.lading_bill
-        lading = PaperWork.objects.get(pk=x)
+        lading = offer.lading_bill
+        print(offer)
+        print(lading)
         serializer = ConfirmLadingBillSerializer(lading, data=request.data)
         if serializer.is_valid():
-            if serializer.validated_data['bill_status'] == False:
-                lading.delete()
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -459,12 +456,9 @@ def confirm_inventory_bill(request, order_pk, offer_pk, format=None):
         return Response(status=status.HTTP_401_UNAUTHORIZED)
     
     elif user.role == "1":
-        x = offer.inventory
-        inventory = Payment.objects.get(pk=x)
+        inventory = offer.inventory
         serializer = ConfirmInventoryBillSerializer(inventory, data=request.data)
         if serializer.is_valid():
-            if serializer.validated_data['bill_status'] == False:
-                inventory.delete()
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -489,12 +483,10 @@ def confirm_demurrage_bill(request, order_pk, offer_pk, format=None):
         return Response(status=status.HTTP_401_UNAUTHORIZED)
     
     elif user.role == "1":
-        x = offer.inventory
-        demurrage = Payment.objects.get(pk=x)
+        
+        demurrage = offer.demurrage
         serializer = ConfirmDemurrageBillSerializer(demurrage, data=request.data)
         if serializer.is_valid():
-            if serializer.validated_data['bill_status'] == False:
-                demurrage.delete()
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -519,9 +511,8 @@ def upload_inventory_receipt(request, order_pk, offer_pk, format=None):
         return Response(status=status.HTTP_401_UNAUTHORIZED)
 
     elif user.role == "1":
-        x = offer.demurrage_bill
-        inventory = Payment.objects.get(pk=x)
-        serializer = UploadInventoryReceiptSerializer(inventory, data=request.data)
+        inventory = offer.inventory
+        serializer = UploadInventoryReceiptSerializer(inventory ,data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -547,8 +538,8 @@ def upload_demurrage_receipt(request, order_pk, offer_pk, format=None):
         return Response(status=status.HTTP_401_UNAUTHORIZED)
 
     elif user.role == "1":
-        x = offer.demurrage_bill
-        demurrage = Payment.objects.get(pk=x)
+
+        demurrage = offer.demurrage
         serializer = UploadDemurrageReceiptSerializer(demurrage, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -574,10 +565,10 @@ def order_completion_approval(request, order_pk, offer_pk, format=None):
         return Response(status=status.HTTP_401_UNAUTHORIZED)
 
     elif user.role == "1":
-        order = Order.objects.get(pk=order_pk)
+        order = offer.order
         order.orderer_completion_date = timezone.now()
         order.save()
-        return Response({'success':'True'}, status=status.HTTP_200_OK)
+        return Response({'success':'Order Completion Approved'}, status=status.HTTP_200_OK)
 
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -599,10 +590,13 @@ def define_second_destination(request, order_pk, offer_pk, format=None):
         return Response(status=status.HTTP_401_UNAUTHORIZED)
     
     elif user.role == "1":
-        x = offer.order
-        order = Order.objects.get(pk=x)
+        order = offer.order
         serializer = DefineSecondDestinationSerializer(order, data=request.data)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -683,7 +677,7 @@ def upload_final_payment_receipt(request, order_pk, offer_pk, format=None):
     elif user.role == "1":
         serializer = UploadFinalPaymentReceipt(data=request.data)
         if serializer.is_valid():
-            
+
             receipt_file = serializer.validated_data['receipt_file']
             final_payment = Payment(receipt_file)
             final_payment.save()
