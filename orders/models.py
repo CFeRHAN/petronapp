@@ -28,7 +28,7 @@ class PaperWork(models.Model):
     """model for covering all paper works"""
     
     bill_file = models.CharField(max_length=35)
-    upload_date = models.DateField(null=False, blank=False)
+    upload_date = models.DateField(auto_now=True, null=False, blank=False)
     status = models.BooleanField(default=False)
     rejection_reasons = models.TextField(blank=True)
 

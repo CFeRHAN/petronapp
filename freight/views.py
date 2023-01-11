@@ -353,10 +353,13 @@ def view_order_number(request, order_pk, offer_pk, format=None):
         return Response(status=status.HTTP_401_UNAUTHORIZED)
 
     elif user.role == '2':
-        serializer = ViewOrderNumberSerializer(offer)
-        serializer.validated_data['order_number_seen_status'] = 'True'
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        serializer = ViewOrderNumberSerializer(offer, data=request.data)
+        if serializer.is_valid():
+            serializer.validated_data['order_number_seen_status'] = 'True'
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -379,12 +382,15 @@ def upload_drivers_info(request, order_pk, offer_pk, format=None):
         return Response(status=status.HTTP_401_UNAUTHORIZED)
 
     elif user.role == "2":
-        x = offer.drivers_info
-        driver_info = PaperWork.objects.get(pk=x)
-        serializer = UploadDriversInfoSerializer(driver_info, data=request.data)
+        serializer = UploadDriversInfoSerializer(data=request.data)
         if serializer.is_valid():
-            
-            serializer.save()
+
+            bill_file = serializer.validated_data['bill_file']
+            drivers_info = PaperWork(bill_file=bill_file)
+            drivers_info.save()
+            offer.drivers_info = drivers_info
+            offer.save()
+
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -410,7 +416,14 @@ def upload_demurrage_bill(request, order_pk, offer_pk):
     elif user.role == "2":
         serializer = UploadDemurrageBillSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+
+            bill_file = serializer.validated_data['bill_file']
+            price = serializer.validated_data['price']
+
+            demurrage_bill = Payment(bill_file=bill_file, price=price)
+            demurrage_bill.save()
+            offer.demurrage = demurrage_bill
+            offer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
@@ -434,12 +447,9 @@ def confirm_inventory_bill(request, order_pk, offer_pk, format=None):
         return Response(status=status.HTTP_401_UNAUTHORIZED)
     
     elif user.role == "2":
-        serializer = ConfirmInventoryBillSerializer(offer, data=request.data)
+        inventory = offer.inventory
+        serializer = ConfirmInventoryBillSerializer(inventory, data=request.data)
         if serializer.is_valid():
-            if serializer.validated_data['bill_status'] == False:
-                x = offer.inventory
-                inventory_bill = Payment.objects.get(pk=x)
-                inventory_bill.delete()
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -464,12 +474,9 @@ def confrim_prepayment_bill(request, order_pk, offer_pk, format=None):
         return Response(status=status.HTTP_401_UNAUTHORIZED)
     
     elif user.role == "2":
-        serializer = ConfrimPrepaymentBillSerializer(offer, data=request.data)
+        prepayment = offer.prepayment
+        serializer = ConfrimPrepaymentBillSerializer(prepayment, data=request.data)
         if serializer.is_valid():
-            if serializer.validated_data['bill_status'] == False:
-                x=offer.prepayment
-                prepayment_bill = Payment.objects.get(pk=x)
-                prepayment_bill.delete()
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -493,7 +500,8 @@ def upload_prepayment_reciept(request, order_pk, offer_pk, format=None):
         return Response(status=status.HTTP_401_UNAUTHORIZED)
     
     elif user.role == "2":
-        serializer = UploadPrepaymentReceiptSerializer(offer, data=request.data)
+        prepayment = offer.prepayment
+        serializer = UploadPrepaymentReceiptSerializer(prepayment, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -518,8 +526,10 @@ def view_load_information(request, order_pk, offer_pk, format=None):
         return Response(status=status.HTTP_401_UNAUTHORIZED)
     
     elif user.role == "2":
-        serializer = ViewLoadInfoSerializer(offer)
         load_info = offer.load_info
+        print(load_info)
+        serializer = ViewLoadInfoSerializer(load_info)
+        print(serializer.data)
         load_info.status = True
         load_info.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -544,9 +554,16 @@ def upload_lading_bill(request, order_pk, offer_pk, format=None):
         return Response(status=status.HTTP_401_UNAUTHORIZED)
     
     elif user.role == "2":
+        
         serializer = UploadLadingBillSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            
+            bill_file = serializer.validated_data['bill_file']
+            lading_bill = PaperWork(bill_file=bill_file)
+            lading_bill.save()
+            offer.lading_bill = lading_bill
+            offer.save()
+
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     else:

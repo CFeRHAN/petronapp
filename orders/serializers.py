@@ -142,14 +142,14 @@ class ConfirmPrepaymentRecieptSerializer(serializers.ModelSerializer):
 class ConfirmPrepaymentReceiptSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
-        fields = ['receipt_file', 'receipt_status', 'receipt_rejection_reasons']
+        fields = ['receipt_file', 'receipt_status','receipt_rejection_reasons']
         read_only_fields = ['receipt_file']
 
 
 class UploadLoadInfoBillSerializer(serializers.ModelSerializer):
     class Meta:
         model = PaperWork
-        exclude = ['status','rejection_reasons']
+        fields = ['bill_file']
 
 
 class UploadInvoicePackingBillSerializer(serializers.ModelSerializer):
@@ -260,9 +260,9 @@ class ConfrimPrepaymentBillSerializer(serializers.ModelSerializer):
 
 class ViewLoadInfoSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Offer
-        fields = ['load_info']
-        depth = 1
+        model = PaperWork
+        fields = '__all__'
+        # depth = 1
 
 
 class UploadLadingBillSerializer(serializers.ModelSerializer):

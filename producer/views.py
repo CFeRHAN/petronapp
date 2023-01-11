@@ -450,8 +450,8 @@ def confirm_prepayment_receipt(request, order_pk, offer_pk, format=None):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-@swagger_auto_schema(methods=['PUT'], request_body=UploadLoadInfoBillSerializer)
-@api_view(['PUT'])
+@swagger_auto_schema(methods=['POST'], request_body=UploadLoadInfoBillSerializer)
+@api_view(['POST'])
 def upload_load_information(request, order_pk, offer_pk, format=None):
     """endpoint that allows producer to upload the load information file"""
 
@@ -466,12 +466,18 @@ def upload_load_information(request, order_pk, offer_pk, format=None):
         return Response(status=status.HTTP_401_UNAUTHORIZED)
 
     elif user.role == "3":
-        x = offer.load_info
-        load_info = PaperWork.objects.get(pk=x)
-        serializer = UploadLoadInfoBillSerializer(load_info, data=request.data)
+
+        serializer = UploadLoadInfoBillSerializer(data=request.data)
+
         if serializer.is_valid():
-            serializer.save()
+
+            bill_file = serializer.validated_data['bill_file']
+            load_info = PaperWork(bill_file=bill_file)
+            load_info.save()
+            offer.load_info = load_info
+            offer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
+            
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     else:
